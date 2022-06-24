@@ -1,0 +1,26 @@
+{
+    "name": "@chemistry/api.crystallography.io",
+    "private": true,
+    "version": "0.1.0",
+    "description": "Crystallography API",
+    "author": {
+      "name": "Volodymyr Vreshch",
+      "url": "http://vreshch.com/"
+    },
+    "license": "MIT",
+    "keywords": [
+      "Application",
+      "crystallography",
+      "Git"
+    ],
+    "engines": {
+      "node": ">=16.0.0"
+    },
+    "devEngines": {
+      "node": ">=16.0.0"
+    },
+    "repository": "https://github.com/chemistry/api.crystallography.io",
+    "workspaces": [
+      "packages/container-1-node"
+    ]   
+}
