@@ -21,6 +21,5 @@
     },
     "repository": "https://github.com/chemistry/api.crystallography.io",
     "workspaces": [
-      "packages/graphql-api"
-    ]   
+    ]
 }
