@@ -39,7 +39,7 @@ module dotnetApp 'container-app.bicep' = {
 module nodeApp 'container-app.bicep' = {
     name: 'graphQLApp'
     params: {
-        containerAppName: 'graph-ql-app'
+        containerAppName: 'graphql-app'
         location: location
         environmentId: environment.outputs.environmentId
         containerImage: graphQLImage
