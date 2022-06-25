@@ -1,5 +1,5 @@
 param location string = resourceGroup().location
-param environmentName string = 'sample-env'
+param environmentName string = 'api-crystallography-io-env'
 param nodeImage string
 param nodePort int
 param dotnetImage string
