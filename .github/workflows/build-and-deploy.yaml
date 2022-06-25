@@ -17,7 +17,10 @@ jobs:
       matrix:
         services:
           [
-            { "imageName": "node", "directory": "./packages/container-1-node" },
+            {
+              "imageName": "graphql-api",
+              "directory": "./packages/graphql-api",
+            },
             {
               "imageName": "dotnet",
               "directory": "./packages/container-2-dotnet",
@@ -27,7 +30,7 @@ jobs:
       contents: read
       packages: write
     outputs:
-      containerImage-node: ${{ steps.image-tag.outputs.image-node }}
+      containerImage-graphql-api: ${{ steps.image-tag.outputs.image-graphql-api }}
       containerImage-dotnet: ${{ steps.image-tag.outputs.image-dotnet }}
     steps:
       - name: Checkout repository
@@ -90,8 +93,8 @@ jobs:
             az group create -g ${{ secrets.RESOURCE_GROUP }} -l westeurope
             az deployment group create -g ${{ secrets.RESOURCE_GROUP }} -f ./deploy/main.bicep \
              -p \
-                nodeImage='${{ needs.build.outputs.containerImage-node }}' \
-                nodePort=3000 \
+                graphQLImage='${{ needs.build.outputs.containerImage-graphql-api }}' \
+                graphQLPort=3000 \
                 dotnetImage='${{ needs.build.outputs.containerImage-dotnet }}' \
                 dotnetPort=80 \
                 registry=${{ env.REGISTRY }} \

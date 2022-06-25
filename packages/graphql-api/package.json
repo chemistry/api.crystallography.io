@@ -1,5 +1,5 @@
 {
-  "name": "container-1-node",
+  "name": "@chemistry/graphql-api",
   "version": "0.0.0",
   "private": true,
   "scripts": {

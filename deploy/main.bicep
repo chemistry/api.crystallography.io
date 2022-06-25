@@ -1,7 +1,7 @@
 param location string = resourceGroup().location
 param environmentName string = 'api-crystallography-io-env'
-param nodeImage string
-param nodePort int
+param graphQLImage string
+param graphQLPort int
 param dotnetImage string
 param dotnetPort int
 param registry string
@@ -11,49 +11,49 @@ param registryPassword string
 
 // Container Apps Environment (environment.bicep)
 module environment 'environment.bicep' = {
-  name: 'container-app-environment'
-  params: {
-    environmentName: environmentName
-    location: location
-  }
+    name: 'container-app-environment'
+    params: {
+        environmentName: environmentName
+        location: location
+    }
 }
 
 // Container-2-Dotnet (container-app.bicep)
 // We deploy it first so we can call it from the node-app
 module dotnetApp 'container-app.bicep' = {
-  name: 'dotnetApp'
-  params: {
-    containerAppName: 'dotnet-app'
-    location: location
-    environmentId: environment.outputs.environmentId
-    containerImage: dotnetImage
-    containerPort: dotnetPort
-    containerRegistry: registry
-    containerRegistryUsername: registryUsername
-    containerRegistryPassword: registryPassword
-    isExternalIngress: false
-  }
+    name: 'dotnetApp'
+    params: {
+        containerAppName: 'dotnet-app'
+        location: location
+        environmentId: environment.outputs.environmentId
+        containerImage: dotnetImage
+        containerPort: dotnetPort
+        containerRegistry: registry
+        containerRegistryUsername: registryUsername
+        containerRegistryPassword: registryPassword
+        isExternalIngress: false
+    }
 }
 
-// Container-1-Node (container-app.bicep)
+// GraphQL API (container-app.bicep)
 module nodeApp 'container-app.bicep' = {
-  name: 'nodeApp'
-  params: {
-    containerAppName: 'node-app'
-    location: location
-    environmentId: environment.outputs.environmentId
-    containerImage: nodeImage
-    containerPort: nodePort
-    containerRegistry: registry
-    containerRegistryUsername: registryUsername
-    containerRegistryPassword: registryPassword
-    isExternalIngress: true
-    // set an environment var for the dotnetFQDN to call
-    environmentVars: [
-      {
-        name: 'DOTNET_FQDN'
-        value: dotnetApp.outputs.fqdn
-      }
-    ]
-  }
+    name: 'graphQLApp'
+    params: {
+        containerAppName: 'graph-ql-app'
+        location: location
+        environmentId: environment.outputs.environmentId
+        containerImage: graphQLImage
+        containerPort: graphQLPort
+        containerRegistry: registry
+        containerRegistryUsername: registryUsername
+        containerRegistryPassword: registryPassword
+        isExternalIngress: true
+        // set an environment var for the dotnetFQDN to call
+        environmentVars: [
+            {
+                name: 'DOTNET_FQDN'
+                value: dotnetApp.outputs.fqdn
+            }
+        ]
+    }
 }
