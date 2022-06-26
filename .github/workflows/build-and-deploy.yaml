@@ -94,9 +94,9 @@ jobs:
             az deployment group create -g ${{ secrets.RESOURCE_GROUP }} -f ./deploy/main.bicep \
              -p \
                 graphQLImage='${{ needs.build.outputs.containerImage-graphql-api }}' \
-                graphQLPort=3000 \
+                graphQLPort=80 \
                 dotnetImage='${{ needs.build.outputs.containerImage-dotnet }}' \
-                dotnetPort=80 \
+                dotnetPort=3000 \
                 registry=${{ env.REGISTRY }} \
                 registryUsername=${{ github.actor }} \
                 registryPassword=${{ secrets.PACKAGES_TOKEN }}
