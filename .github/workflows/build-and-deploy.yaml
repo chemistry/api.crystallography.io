@@ -96,6 +96,7 @@ jobs:
                 graphQLImage='${{ needs.build.outputs.containerImage-graphql-api }}' \
                 graphQLPort=80 \
                 dotnetImage='${{ needs.build.outputs.containerImage-dotnet }}' \
+                mongoConnection='${{ secrets.MONGO_CONNECTION }}' \
                 dotnetPort=3000 \
                 registry=${{ env.REGISTRY }} \
                 registryUsername=${{ github.actor }} \

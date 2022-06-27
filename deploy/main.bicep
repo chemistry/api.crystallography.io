@@ -5,6 +5,7 @@ param graphQLPort int
 param dotnetImage string
 param dotnetPort int
 param registry string
+param mongoConnection string
 param registryUsername string
 @secure()
 param registryPassword string
@@ -53,6 +54,10 @@ module nodeApp 'container-app.bicep' = {
             {
                 name: 'DOTNET_FQDN'
                 value: dotnetApp.outputs.fqdn
+            }
+            {
+                name: 'MONGO_CONNECTION'
+                value: mongoConnection
             }
         ]
     }
