@@ -1,6 +1,48 @@
 import { gql } from "apollo-server";
 
 export const typeDefs = gql`
+  type AuthorDetails {
+    id: ID!
+    full: String
+    count: String
+    updated: String
+    created: String
+    structures(limit: Int, offset: Int): [Structure]
+  }
+
+  type Author {
+    name: String
+    link: String
+  }
+
+  type MetaInfo {
+    id: ID!
+    count: Int
+  }
+
+  type Journal {
+    id: ID!
+    title: String
+    journal: String
+    year: String
+    volume: String
+    issue: String
+    firstpage: String
+    lastpage: String
+    doi: String
+    authors: [Author]
+  }
+
+  type SearchResults {
+    structures: [Structure]
+    meta: MetaInfo
+  }
+
+  type StructureDataLoops {
+    columns: [String]
+    data: [[String]]
+  }
+
   type Structure {
     id: ID!
     journal: Journal
@@ -31,6 +73,16 @@ export const typeDefs = gql`
     wRall: String
     wRobs: String
     wRref: String
+  }
+
+  type AuthorsCollectionResponse {
+    authors: [AuthorDetails]
+    meta: MetaInfo
+  }
+
+  type StructuresCollectionResponse {
+    structures: [Structure]
+    meta: MetaInfo
   }
 
   type Query {
