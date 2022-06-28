@@ -28,7 +28,7 @@ const getContext = async (): Promise<AppContext> => {
       return shell.exec(command, { async: true }).stdout;
     },
     sendToQueue: (data: object): void => {
-      chanel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(data)));
+      // chanel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(data)));
     },
   };
 };
