@@ -20,9 +20,8 @@ module environment 'environment.bicep' = {
 }
 
 // cod-to-disk (container-app.bicep)
-// We deploy it first so we can call it from the node-app
-module dotnetApp 'container-app.bicep' = {
-    name: 'dotnetApp'
+module codToDisk 'container-app.bicep' = {
+    name: 'codToDisk'
     params: {
         containerAppName: 'cod-to-disk'
         location: location
@@ -33,6 +32,8 @@ module dotnetApp 'container-app.bicep' = {
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
         isExternalIngress: false
+        minReplicas: 1
+        maxReplicas: 1
     }
 }
 
@@ -53,7 +54,7 @@ module nodeApp 'container-app.bicep' = {
         environmentVars: [
             {
                 name: 'DOTNET_FQDN'
-                value: dotnetApp.outputs.fqdn
+                value: codToDisk.outputs.fqdn
             }
             {
                 name: 'MONGO_CONNECTION'

@@ -5,6 +5,8 @@ param containerImage string
 param containerPort int
 param isExternalIngress bool = false
 param containerRegistry string
+param minReplicas int = 0
+param maxReplicas int = 10
 param containerRegistryUsername string
 
 param environmentVars array = []
@@ -45,7 +47,8 @@ resource containerApp 'Microsoft.App/containerApps@2022-01-01-preview' = {
                 }
             ]
             scale: {
-                minReplicas: 1
+                minReplicas: minReplicas
+                maxReplicas: maxReplicas
             }
         }
     }
