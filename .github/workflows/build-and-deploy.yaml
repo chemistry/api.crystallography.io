@@ -21,10 +21,7 @@ jobs:
               "imageName": "graphql-api",
               "directory": "./packages/graphql-api",
             },
-            {
-              "imageName": "dotnet",
-              "directory": "./packages/container-2-dotnet",
-            },
+            { "imageName": "dotnet", "directory": "./packages/cod-to-disk" },
           ]
     permissions:
       contents: read

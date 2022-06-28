@@ -19,12 +19,12 @@ module environment 'environment.bicep' = {
     }
 }
 
-// Container-2-Dotnet (container-app.bicep)
+// cod-to-disk (container-app.bicep)
 // We deploy it first so we can call it from the node-app
 module dotnetApp 'container-app.bicep' = {
     name: 'dotnetApp'
     params: {
-        containerAppName: 'dotnet-app'
+        containerAppName: 'cod-to-disk'
         location: location
         environmentId: environment.outputs.environmentId
         containerImage: dotnetImage
