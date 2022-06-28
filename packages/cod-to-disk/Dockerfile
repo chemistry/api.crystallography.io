@@ -1,17 +1,19 @@
-# syntax=docker/dockerfile:1
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
+FROM node:16-alpine
+RUN mkdir /app
 WORKDIR /app
 
-# Copy csproj and restore as distinct layers
-COPY *.csproj ./
-RUN dotnet restore
+# install python
+RUN apk update && apk add --no-cache python2 make g++ pkgconfig libsecret-dev
+ENV PKG_CONFIG_PATH=/usr/lib/pkgcon
 
-# Copy everything else and build
-COPY . .
-RUN dotnet publish -c Release -o out
+# Install rsync & gsutil
+RUN apk add --update subversion rsync openssh && rm -rf /var/cache/apk/*
 
-# Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:6.0
-WORKDIR /app
-COPY --from=build-env /app/out .
-ENTRYPOINT ["dotnet", "container-2-dotnet.dll"]
+# setup packages
+COPY package*.json ./
+RUN npm install
+ENV NODE_ENV=production
+COPY . /app
+RUN npm run build
+
+CMD [ "/bin/sh", "/app/start-script.sh"]
