@@ -21,14 +21,17 @@ jobs:
               "imageName": "graphql-api",
               "directory": "./packages/graphql-api",
             },
-            { "imageName": "dotnet", "directory": "./packages/cod-to-disk" },
+            {
+              "imageName": "cod-to-disk",
+              "directory": "./packages/cod-to-disk",
+            },
           ]
     permissions:
       contents: read
       packages: write
     outputs:
       containerImage-graphql-api: ${{ steps.image-tag.outputs.image-graphql-api }}
-      containerImage-dotnet: ${{ steps.image-tag.outputs.image-dotnet }}
+      containerImage-cod-to-disk: ${{ steps.image-tag.outputs.image-cod-to-disk }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -91,10 +94,8 @@ jobs:
             az deployment group create -g ${{ secrets.RESOURCE_GROUP }} -f ./deploy/main.bicep \
              -p \
                 graphQLImage='${{ needs.build.outputs.containerImage-graphql-api }}' \
-                graphQLPort=80 \
-                dotnetImage='${{ needs.build.outputs.containerImage-dotnet }}' \
+                codToDiskImage='${{ needs.build.outputs.containerImage-cod-to-disk }}' \
                 mongoConnection='${{ secrets.MONGO_CONNECTION }}' \
-                dotnetPort=3000 \
                 registry=${{ env.REGISTRY }} \
                 registryUsername=${{ github.actor }} \
                 registryPassword=${{ secrets.PACKAGES_TOKEN }}

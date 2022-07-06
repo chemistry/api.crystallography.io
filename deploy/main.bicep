@@ -1,9 +1,7 @@
 param location string = resourceGroup().location
 param environmentName string = 'api-crystallography-io-env'
 param graphQLImage string
-param graphQLPort int
-param dotnetImage string
-param dotnetPort int
+param codToDiskImage string
 param registry string
 param mongoConnection string
 param registryUsername string
@@ -38,7 +36,7 @@ module environment 'environment.bicep' = {
 }
 
 // cod-to-disk (container-app.bicep)
-module codToDisk 'cod-to-disk.bicep' = {
+module codToDisk 'container-cod-to-disk.bicep' = {
     name: 'codToDisk'
     dependsOn: [
         environment
@@ -46,7 +44,7 @@ module codToDisk 'cod-to-disk.bicep' = {
     params: {
         location: location
         environmentId: environment.outputs.environmentId
-        containerImage: dotnetImage
+        containerImage: codToDiskImage
         containerRegistry: registry
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
@@ -61,20 +59,21 @@ module codToDisk 'cod-to-disk.bicep' = {
 }
 
 // GraphQL API (container-app.bicep)
-module nodeApp 'container-app.bicep' = {
+module graphQLApp 'container-graph-ql.bicep' = {
     name: 'graphQLApp'
     params: {
         containerAppName: 'graphql-app'
         location: location
         environmentId: environment.outputs.environmentId
         containerImage: graphQLImage
-        containerPort: graphQLPort
         containerRegistry: registry
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
-        isExternalIngress: true
-        // set an environment var for the dotnetFQDN to call
         environmentVars: [
+            {
+                name: 'COD_TO_DISK_FQDN'
+                value: codToDisk.outputs.fqdn
+            }
             {
                 name: 'MONGO_CONNECTION'
                 value: mongoConnection
