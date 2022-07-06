@@ -170,7 +170,9 @@ export const app = async (context: AppContext) => {
   const api = express();
 
   api.get("/", (_, res) => {
-    res.send("hello world");
+    fs.readdir("/data", (err, files) => {
+      res.send(JSON.stringify(files));
+    });
   });
 
   api.listen(8080);
