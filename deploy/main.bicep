@@ -20,20 +20,24 @@ module environment 'environment.bicep' = {
 }
 
 // cod-to-disk (container-app.bicep)
-module codToDisk 'container-app.bicep' = {
+module codToDisk 'cod-to-disk.bicep' = {
     name: 'codToDisk'
+    dependsOn: [
+        environment
+    ]
     params: {
-        containerAppName: 'cod-to-disk'
         location: location
         environmentId: environment.outputs.environmentId
         containerImage: dotnetImage
-        containerPort: dotnetPort
         containerRegistry: registry
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
-        isExternalIngress: false
-        minReplicas: 1
-        maxReplicas: 1
+        environmentVars: [
+            {
+                name: 'DATA_PATH'
+                value: '/data'
+            }
+        ]
     }
 }
 
@@ -52,10 +56,6 @@ module nodeApp 'container-app.bicep' = {
         isExternalIngress: true
         // set an environment var for the dotnetFQDN to call
         environmentVars: [
-            {
-                name: 'DOTNET_FQDN'
-                value: codToDisk.outputs.fqdn
-            }
             {
                 name: 'MONGO_CONNECTION'
                 value: mongoConnection
