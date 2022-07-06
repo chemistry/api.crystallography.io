@@ -3,6 +3,7 @@ param environmentId string
 param containerImage string
 param containerRegistry string
 param containerRegistryUsername string
+param sharedStorageName string
 param environmentVars array = []
 
 @secure()
@@ -43,7 +44,7 @@ resource codToDiskApp 'Microsoft.App/containerApps@2022-03-01' = {
                     volumeMounts: [
                         {
                             mountPath: '/data'
-                            volumeName: 'empty-volume'
+                            volumeName: 'azure-files-volume'
                         }
                     ]
                 }
@@ -54,26 +55,11 @@ resource codToDiskApp 'Microsoft.App/containerApps@2022-03-01' = {
             }
             volumes: [
                 {
-                    name: 'empty-volume'
-                    storageType: 'EmptyDir'
+                    name: 'azure-files-volume'
+                    storageType: 'AzureFile'
+                    storageName: sharedStorageName
                 }
             ]
         }
     }
 }
-/*
-                    volumeMounts: [
-                        {
-                            mountPath: '/data'
-                            volumeName: 'empty-volume'
-                        }
-                    ]
-
-
-            volumes: [
-                {
-                    name: 'empty-volume'
-                    storageType: 'EmptyDir'
-                }
-            ]
-*/

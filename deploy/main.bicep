@@ -50,6 +50,7 @@ module codToDisk 'cod-to-disk.bicep' = {
         containerRegistry: registry
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
+        sharedStorageName: sharedStorageName
         environmentVars: [
             {
                 name: 'DATA_PATH'
