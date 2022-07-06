@@ -1,5 +1,10 @@
 param location string
 param environmentName string
+param storageAccountName string
+param storageAccountKey string
+param storageShareName string
+param sharedStorageName string
+
 param logAnalyticsWorkspaceName string = 'logs-${environmentName}'
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {
@@ -26,6 +31,19 @@ resource environment 'Microsoft.App/managedEnvironments@2022-03-01' = {
                 customerId: logAnalyticsWorkspace.properties.customerId
                 sharedKey: logAnalyticsWorkspace.listKeys().primarySharedKey
             }
+        }
+    }
+}
+
+resource environment_storage 'Microsoft.App/managedEnvironments/storages@2022-03-01' = {
+    name: sharedStorageName
+    parent: environment
+    properties: {
+        azureFile: {
+            accountKey: storageAccountKey
+            accountName: storageAccountName
+            shareName: storageShareName
+            accessMode: 'ReadWrite'
         }
     }
 }

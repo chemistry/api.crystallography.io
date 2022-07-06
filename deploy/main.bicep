@@ -10,12 +10,30 @@ param registryUsername string
 @secure()
 param registryPassword string
 
+var sharedStorageName = '${environmentName}-share'
+
+resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
+    name: replace('${environmentName}', '-', '')
+    location: location
+    sku: {
+        name: 'Standard_LRS'
+    }
+    kind: 'StorageV2'
+    properties: {
+        supportsHttpsTrafficOnly: true
+    }
+}
+
 // Container Apps Environment (environment.bicep)
 module environment 'environment.bicep' = {
     name: 'container-app-environment'
     params: {
         environmentName: environmentName
         location: location
+        storageAccountName: storage.name
+        storageAccountKey: storage.listKeys().keys[0].value
+        storageShareName: 'data'
+        sharedStorageName: sharedStorageName
     }
 }
 
