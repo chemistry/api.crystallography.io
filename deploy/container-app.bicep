@@ -14,7 +14,7 @@ param environmentVars array = []
 @secure()
 param containerRegistryPassword string
 
-resource containerApp 'Microsoft.App/containerApps@2022-01-01-preview' = {
+resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
     name: containerAppName
     location: location
     properties: {
