@@ -1,6 +1,7 @@
 import * as path from "path";
 import * as fs from "fs";
 import * as cron from "node-cron";
+import express from "express";
 import { ExecOptions, ShellString } from "shelljs";
 import { Readable, Transform, TransformCallback, Writable } from "stream";
 
@@ -165,6 +166,14 @@ export const app = async (context: AppContext) => {
   });
 
   logger.info(`subscribed cron events`);
+
+  const api = express();
+
+  api.get("/", (_, res) => {
+    res.send("hello world");
+  });
+
+  api.listen(8080);
 
   // synchronizeData(context);
 };

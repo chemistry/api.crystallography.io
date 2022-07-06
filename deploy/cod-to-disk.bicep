@@ -30,7 +30,7 @@ resource codToDiskApp 'Microsoft.App/containerApps@2022-03-01' = {
                 }
             ]
             ingress: {
-                external: false
+                external: true
                 targetPort: 8080
             }
         }
