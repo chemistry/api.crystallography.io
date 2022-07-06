@@ -40,13 +40,40 @@ resource codToDiskApp 'Microsoft.App/containerApps@2022-03-01' = {
                     image: containerImage
                     name: containerAppName
                     env: environmentVars
+                    volumeMounts: [
+                        {
+                            mountPath: '/data'
+                            volumeName: 'empty-volume'
+                        }
+                    ]
                 }
             ]
             scale: {
                 minReplicas: 1
                 maxReplicas: 1
             }
-
+            volumes: [
+                {
+                    name: 'empty-volume'
+                    storageType: 'EmptyDir'
+                }
+            ]
         }
     }
 }
+/*
+                    volumeMounts: [
+                        {
+                            mountPath: '/data'
+                            volumeName: 'empty-volume'
+                        }
+                    ]
+
+
+            volumes: [
+                {
+                    name: 'empty-volume'
+                    storageType: 'EmptyDir'
+                }
+            ]
+*/
