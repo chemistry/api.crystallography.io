@@ -166,5 +166,5 @@ export const app = async (context: AppContext) => {
 
   logger.info(`subscribed cron events`);
 
-  synchronizeData(context);
+  // synchronizeData(context);
 };
