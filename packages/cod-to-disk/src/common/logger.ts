@@ -2,47 +2,47 @@ const path = require("path");
 const fs = require("fs");
 
 export const getPackageName = () => {
-  const packagePath = path.resolve(__dirname, "../../package.json");
-  const packageJSON = JSON.parse(fs.readFileSync(packagePath).toString());
-  return (packageJSON.name || "unknown").replace("@chemistry/", "");
+    const packagePath = path.resolve(__dirname, "../../package.json");
+    const packageJSON = JSON.parse(fs.readFileSync(packagePath).toString());
+    return (packageJSON.name || "unknown").replace("@chemistry/", "");
 };
 
 export const getLogger = async () => {
-  //     const logging = new Logging();
-  //     const log = logging.log(getPackageName());
+    //     const logging = new Logging();
+    //     const log = logging.log(getPackageName());
 
-  const metadata = {
-    resource: { type: "global" },
-    severity: "INFO",
-  };
+    const metadata = {
+        resource: { type: "global" },
+        severity: "INFO",
+    };
 
-  return {
-    info: async (text: string) => {
-      //             const entry = log.entry(metadata, text);
-      //             await log.write(entry);
+    return {
+        info: async (text: string) => {
+            //             const entry = log.entry(metadata, text);
+            //             await log.write(entry);
 
-      // tslint:disable-next-line
-      console.log(text);
-    },
-    error: async (text: string) => {
-      //             const entry = log.entry(metadata, text);
-      /*             await log.write({
+            // tslint:disable-next-line
+            console.log(text);
+        },
+        error: async (text: string) => {
+            //             const entry = log.entry(metadata, text);
+            /*             await log.write({
                 ...entry,
                 severity: 'ERROR'
             });
 */
-      // tslint:disable-next-line
-      console.log(text);
-    },
-    trace: async (text: string) => {
-      /*            const entry = log.entry(metadata, text);
+            // tslint:disable-next-line
+            console.log(text);
+        },
+        trace: async (text: string) => {
+            /*            const entry = log.entry(metadata, text);
             await log.write({
                 ...entry,
                 severity: 'NOTICE'
             });
         */
-      // tslint:disable-next-line
-      console.log(text);
-    },
-  };
+            // tslint:disable-next-line
+            console.log(text);
+        },
+    };
 };
