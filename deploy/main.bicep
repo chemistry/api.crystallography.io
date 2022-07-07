@@ -9,6 +9,7 @@ param registryUsername string
 param registryPassword string
 
 var sharedStorageName = '${environmentName}-share'
+var fileShareName = 'data'
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
     name: replace('${environmentName}', '-', '')
@@ -22,6 +23,11 @@ resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
     }
 }
 
+resource myStorage 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' = {
+    name: '${storage.name}/default/${fileShareName}'
+    dependsOn: []
+}
+
 // Container Apps Environment (environment.bicep)
 module environment 'environment.bicep' = {
     name: 'container-app-environment'
@@ -30,7 +36,7 @@ module environment 'environment.bicep' = {
         location: location
         storageAccountName: storage.name
         storageAccountKey: storage.listKeys().keys[0].value
-        storageShareName: 'data'
+        storageShareName: fileShareName
         sharedStorageName: sharedStorageName
     }
 }
