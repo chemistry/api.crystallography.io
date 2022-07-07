@@ -24,7 +24,7 @@ export interface CodFileRecord {
     codId: string;
 }
 
-const DATA_PATH = "/home/data/cif";
+const DATA_PATH = "/data/cif";
 const FILE_REGEX = /^\w{1}\s+(([\w\d.\/]+\/(\d+)\.cif))$/i;
 
 let count = 0;
