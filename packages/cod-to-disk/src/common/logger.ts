@@ -1,6 +1,5 @@
 const path = require("path");
 const fs = require("fs");
-// const { Logging } = require('@google-cloud/logging');
 
 export const getPackageName = () => {
   const packagePath = path.resolve(__dirname, "../../package.json");
@@ -41,7 +40,7 @@ export const getLogger = async () => {
                 ...entry,
                 severity: 'NOTICE'
             });
-*/
+        */
       // tslint:disable-next-line
       console.log(text);
     },

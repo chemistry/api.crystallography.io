@@ -1,0 +1,21 @@
+version: "3.4"
+
+services:
+    cod-to-disk:
+        image: 'ghcr.io/chemistry/api.crystallography.io/cod-to-disk:latest'
+        restart: always
+        volumes:
+          - cod-data:/home/data
+        networks:
+          - net
+        build:
+            context: ./packages/cod-to-disk
+            dockerfile: Dockerfile
+
+networks:
+  net:
+  traefik-public:
+    external: true
+
+volumes:
+    cod-data:
