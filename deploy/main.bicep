@@ -10,6 +10,7 @@ param registryPassword string
 
 var sharedStorageName = '${environmentName}-share'
 var fileShareName = 'data'
+var queueName = 'queue'
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
     name: replace('${environmentName}', '-', '')
@@ -26,6 +27,13 @@ resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
 resource myStorage 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' = {
     name: '${storage.name}/default/${fileShareName}'
     dependsOn: []
+}
+
+resource symbolicname 'Microsoft.Storage/storageAccounts/queueServices/queues@2021-09-01' = {
+    name: '${storage.name}/default/${queueName}'
+    properties: {
+        metadata: {}
+    }
 }
 
 // Container Apps Environment (environment.bicep)
