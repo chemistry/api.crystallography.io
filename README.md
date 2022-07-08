@@ -24,11 +24,11 @@ docker-compose build
 * Start application
 
 ```bash
-docker-compose down -v && docker-compose up --build -d
+docker-compose down -v && docker-compose up --build -d && docker-compose logs -f
 ```
 
 * View application logs
 
 ```bash
-docker-compose logs
+docker-compose logs -f
 ```

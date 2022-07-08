@@ -25,7 +25,7 @@ export interface CodFileRecord {
 }
 
 const DATA_PATH = "/data/cif";
-const FILE_REGEX = /^\w{1}\s+(([\w\d.\/]+\/(\d+)\.cif))$/i;
+const FILE_REGEX = /^(([\w\d.\/]+\/(\d+)\.cif))$/i;
 
 let count = 0;
 
@@ -59,6 +59,7 @@ const sendInfoToConsole = () =>
     new Writable({
         objectMode: true,
         write: (chunk, _encoding, done) => {
+            count += chunk.length;
             console.log(JSON.stringify(chunk));
             done();
         },
@@ -66,8 +67,7 @@ const sendInfoToConsole = () =>
 
 const fetchDataFromCod = ({ logger, execAsync }: AppContext): Readable => {
     const isFirstStart = !fs.existsSync(DATA_PATH);
-    const cmd =
-        "rsync -av --delete rsync://www.crystallography.net/cif " + DATA_PATH;
+    const cmd = `rsync -av --delete rsync://www.crystallography.net/cif ${DATA_PATH}`;
     if (isFirstStart) {
         logger.trace("First start: initial fetching data...");
         return execAsync(cmd);
@@ -78,7 +78,7 @@ const fetchDataFromCod = ({ logger, execAsync }: AppContext): Readable => {
 };
 
 const synchronizeData = (context: AppContext) => {
-    const { logger, exec } = context;
+    const { logger } = context;
 
     return new Promise<void>((resolve) => {
         fetchDataFromCod(context)
@@ -98,27 +98,30 @@ export const app = async (context: AppContext) => {
 
     const syncAndLog = async () => {
         logger.info("syncronization started");
+        count = 0;
         const start = +new Date();
         await synchronizeData(context);
         const end = +new Date();
+        logger.info(`totally synchronized ${count}`);
         logger.info(`synchronized in ${end - start} 'time': ${end - start}`);
     };
 
     const startServer = () => {
-        const api = express();
+        new Promise<void>((resolve) => {
+            const api = express();
 
-        api.get("/", (_, res) => {
-            fs.readdir("/data", (err, files) => {
-                res.send(JSON.stringify(files));
+            api.get("/", (_, res) => {
+                fs.readdir(DATA_PATH, (_, files) => {
+                    res.send(JSON.stringify(files));
+                });
             });
+            api.listen(8080, resolve);
         });
-
-        api.listen(8080);
     };
 
-    // cron.schedule("00 45 */1 * * *", syncAndLog);
-    // logger.info(`subscribed cron events`);
+    cron.schedule("00 45 */1 * * *", syncAndLog);
+    logger.info(`subscribed cron events`);
 
-    startServer();
+    await startServer();
     await syncAndLog();
 };

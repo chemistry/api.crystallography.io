@@ -1,5 +1,6 @@
 FROM node:16.6.1-alpine3.11
 RUN mkdir /app
+RUN mkdir /data
 WORKDIR /app
 
 # Install rsync

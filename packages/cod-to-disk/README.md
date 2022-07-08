@@ -7,13 +7,7 @@ Synchronize information from COD database and store to disk
 Build Container
 
 ```bash
-cd ../../../ && docker build -t gcr.io/crystallography-io/cod-to-disk -f packages/containers/cod-to-disk/Dockerfile .
-```
-
-Execute container
-
-```bash
-docker run --rm --name cod-to-disk gcr.io/crystallography-io/cod-to-disk
+docker build .
 ```
 
 ## Local Commands
