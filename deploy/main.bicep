@@ -8,9 +8,11 @@ param registryUsername string
 @secure()
 param registryPassword string
 
+//------------------------------------------------------------
 var sharedStorageName = '${environmentName}-share'
 var fileShareName = 'data'
 var queueName = 'queue'
+var serviceBusNamespaceName = 'service-bus'
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
     name: replace('${environmentName}', '-', '')
@@ -29,10 +31,18 @@ resource myStorage 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-0
     dependsOn: []
 }
 
-resource symbolicname 'Microsoft.Storage/storageAccounts/queueServices/queues@2021-09-01' = {
+resource toProcessQueue 'Microsoft.Storage/storageAccounts/queueServices/queues@2021-09-01' = {
     name: '${storage.name}/default/${queueName}'
     properties: {
         metadata: {}
+    }
+}
+
+module serviceBusModule 'servicebus.bicep' = {
+    name: '${deployment().name}--servicebus'
+    params: {
+        serviceBusNamespaceName: serviceBusNamespaceName
+        location: location
     }
 }
 
