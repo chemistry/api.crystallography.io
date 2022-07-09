@@ -1,11 +1,12 @@
 param location string
-param environmentName string
+param baseName string
 param storageAccountName string
 param storageAccountKey string
 param storageShareName string
 param sharedStorageName string
 
-param logAnalyticsWorkspaceName string = '${environmentName}--logs'
+var logAnalyticsWorkspaceName = '${baseName}--logs'
+var enviromentName = '${baseName}--env'
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {
     name: logAnalyticsWorkspaceName
@@ -22,7 +23,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03
 }
 
 resource environment 'Microsoft.App/managedEnvironments@2022-03-01' = {
-    name: environmentName
+    name: enviromentName
     location: location
     properties: {
         appLogsConfiguration: {

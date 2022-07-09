@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------------------//
 param location string = resourceGroup().location
-param environmentName string = 'c14'
 param graphQLImage string
 param codToDiskImage string
 param registry string
@@ -9,15 +8,18 @@ param registryUsername string
 @secure()
 param registryPassword string
 
+var environmentName = 'dev'
+var baseName = 'c14-${environmentName}'
+
 //---------------------------------------------------------------------------------//
 //---------------------------------------------------------------------------------//
-var sharedStorageName = '${environmentName}--share'
-var serviceBusNamespaceName = '${environmentName}--service-bus'
+var sharedStorageName = '${baseName}-share'
+var serviceBusNamespaceName = '${baseName}-service-bus'
 var fileShareName = 'data'
 var queueName = 'queue'
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
-    name: replace('${environmentName}', '-', '')
+    name: replace('${baseName}-storage', '-', '')
     location: location
     sku: {
         name: 'Standard_LRS'
@@ -53,7 +55,7 @@ resource serviceBus 'Microsoft.ServiceBus/namespaces@2022-01-01-preview' = {
 module environment 'environment.bicep' = {
     name: 'container-app-environment'
     params: {
-        environmentName: environmentName
+        baseName: baseName
         location: location
         storageAccountName: storage.name
         storageAccountKey: storage.listKeys().keys[0].value
