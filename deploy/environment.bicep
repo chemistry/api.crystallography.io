@@ -5,7 +5,7 @@ param storageAccountKey string
 param storageShareName string
 param sharedStorageName string
 
-param logAnalyticsWorkspaceName string = 'logs-${environmentName}'
+param logAnalyticsWorkspaceName string = '${environmentName}--logs'
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {
     name: logAnalyticsWorkspaceName

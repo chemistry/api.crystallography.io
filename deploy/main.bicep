@@ -1,5 +1,6 @@
+//---------------------------------------------------------------------------------//
 param location string = resourceGroup().location
-param environmentName string = 'api-crystallography-io-env'
+param environmentName string = 'c14'
 param graphQLImage string
 param codToDiskImage string
 param registry string
@@ -8,11 +9,12 @@ param registryUsername string
 @secure()
 param registryPassword string
 
-//------------------------------------------------------------
-var sharedStorageName = '${environmentName}-share'
+//---------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------------//
+var sharedStorageName = '${environmentName}--share'
+var serviceBusNamespaceName = '${environmentName}--service-bus'
 var fileShareName = 'data'
 var queueName = 'queue'
-var serviceBusNamespaceName = 'c14-service-bus'
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
     name: replace('${environmentName}', '-', '')
@@ -62,7 +64,7 @@ module environment 'environment.bicep' = {
 
 // cod-to-disk (container-app.bicep)
 module codToDisk 'containers/cod-to-disk.bicep' = {
-    name: 'codToDisk'
+    name: 'cod-to-disk'
     dependsOn: [
         environment
     ]
@@ -85,7 +87,7 @@ module codToDisk 'containers/cod-to-disk.bicep' = {
 
 // GraphQL API (container-app.bicep)
 module graphQLApp 'containers/graph-ql.bicep' = {
-    name: 'graphQLApp'
+    name: 'graph-ql-app'
     params: {
         location: location
         environmentId: environment.outputs.environmentId
