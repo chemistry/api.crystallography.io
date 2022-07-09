@@ -12,7 +12,7 @@ param registryPassword string
 var sharedStorageName = '${environmentName}-share'
 var fileShareName = 'data'
 var queueName = 'queue'
-var serviceBusNamespaceName = 'service-bus'
+var serviceBusNamespaceName = 'c14-service-bus'
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
     name: replace('${environmentName}', '-', '')
@@ -38,11 +38,12 @@ resource toProcessQueue 'Microsoft.Storage/storageAccounts/queueServices/queues@
     }
 }
 
-module serviceBusModule 'servicebus.bicep' = {
-    name: '${deployment().name}--servicebus'
-    params: {
-        serviceBusNamespaceName: serviceBusNamespaceName
-        location: location
+resource serviceBus 'Microsoft.ServiceBus/namespaces@2022-01-01-preview' = {
+    name: serviceBusNamespaceName
+    location: location
+    sku: {
+        name: 'Basic'
+        tier: 'Basic'
     }
 }
 
