@@ -61,7 +61,7 @@ module environment 'environment.bicep' = {
 }
 
 // cod-to-disk (container-app.bicep)
-module codToDisk 'container-cod-to-disk.bicep' = {
+module codToDisk 'containers/cod-to-disk.bicep' = {
     name: 'codToDisk'
     dependsOn: [
         environment
@@ -84,10 +84,9 @@ module codToDisk 'container-cod-to-disk.bicep' = {
 }
 
 // GraphQL API (container-app.bicep)
-module graphQLApp 'container-graph-ql.bicep' = {
+module graphQLApp 'containers/graph-ql.bicep' = {
     name: 'graphQLApp'
     params: {
-        containerAppName: 'graphql-app'
         location: location
         environmentId: environment.outputs.environmentId
         containerImage: graphQLImage

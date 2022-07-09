@@ -1,4 +1,3 @@
-param containerAppName string
 param location string
 param environmentId string
 param containerImage string
@@ -9,6 +8,7 @@ param environmentVars array = []
 
 @secure()
 param containerRegistryPassword string
+var containerAppName = 'graphql-app'
 
 resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
     name: containerAppName
@@ -43,7 +43,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
                 }
             ]
             scale: {
-                minReplicas: 1
+                minReplicas: 0
                 maxReplicas: 5
             }
         }
