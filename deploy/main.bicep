@@ -1,23 +1,25 @@
 //---------------------------------------------------------------------------------//
-param location string = resourceGroup().location
-param graphQLImage string
-param codToDiskImage string
-param registry string
-param mongoConnection string
+// Required arguments:
 param registryUsername string
+param environmentName string
 @secure()
 param registryPassword string
-
-var environmentName = 'dev'
+//---------------------------------------------------------------------------------//
+// Optional arguments:
+param location string = resourceGroup().location
+param graphQLImage string = 'chemistry/api.crystallography.io/graphql-api:latest'
+param codToDiskImage string = 'chemistry/api.crystallography.io/cod-to-disk:latest'
+param registry string = 'ghcr.io'
+param mongoConnection string = ''
 var baseName = 'c14-${environmentName}'
-
 //---------------------------------------------------------------------------------//
-//---------------------------------------------------------------------------------//
+// Constants:
 var sharedStorageName = '${baseName}-share'
-var serviceBusNamespaceName = '${baseName}-service-bus'
+var serviceBusNamespaceName = '${baseName}--service-bus'
 var fileShareName = 'data'
 var queueName = 'queue'
-
+//---------------------------------------------------------------------------------//
+// Resources:
 resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
     name: replace('${baseName}-storage', '-', '')
     location: location
@@ -50,7 +52,8 @@ resource serviceBus 'Microsoft.ServiceBus/namespaces@2022-01-01-preview' = {
         tier: 'Basic'
     }
 }
-
+//---------------------------------------------------------------------------------//
+// Container App:
 // Container Apps Environment (environment.bicep)
 module environment 'environment.bicep' = {
     name: 'container-app-environment'
@@ -71,6 +74,7 @@ module codToDisk 'containers/cod-to-disk.bicep' = {
         environment
     ]
     params: {
+        baseName: baseName
         location: location
         environmentId: environment.outputs.environmentId
         containerImage: codToDiskImage
@@ -91,6 +95,7 @@ module codToDisk 'containers/cod-to-disk.bicep' = {
 module graphQLApp 'containers/graph-ql.bicep' = {
     name: 'graph-ql-app'
     params: {
+        baseName: baseName
         location: location
         environmentId: environment.outputs.environmentId
         containerImage: graphQLImage
@@ -109,3 +114,4 @@ module graphQLApp 'containers/graph-ql.bicep' = {
         ]
     }
 }
+//---------------------------------------------------------------------------------//

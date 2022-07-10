@@ -15,20 +15,28 @@ CI/CD configuration:
 
 ## Local development
 
-* Build application
+### Build application
 
 ```bash
 docker-compose build
 ```
 
-* Start application
+### Start application
 
 ```bash
 docker-compose down -v && docker-compose up --build -d && docker-compose logs -f
 ```
 
-* View application logs
+### View application logs
 
 ```bash
 docker-compose logs -f
+```
+
+### Deploy the website to Azure
+
+* Create github token with `packages:read` scope, and set as environment variable PACKAGES_TOKEN. [Learn more](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+
+```bash
+./deploy.sh
 ```
