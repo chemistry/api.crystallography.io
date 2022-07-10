@@ -93,17 +93,33 @@ const synchronizeData = (context: AppContext) => {
     });
 };
 
+let syncOngoing = false;
 export const app = async (context: AppContext) => {
     const { logger } = context;
 
     const syncAndLog = async () => {
-        logger.info("syncronization started");
-        count = 0;
-        const start = +new Date();
-        await synchronizeData(context);
-        const end = +new Date();
-        logger.info(`totally synchronized ${count}`);
-        logger.info(`synchronized in ${end - start} 'time': ${end - start}`);
+        if (syncOngoing) {
+            logger.info("syncronization is ongoing ... skipping");
+            return;
+        }
+        try {
+            syncOngoing = true;
+            logger.info("syncronization started");
+            count = 0;
+            const start = +new Date();
+            await synchronizeData(context);
+            const end = +new Date();
+            logger.info(`totally synchronized ${count}`);
+            logger.info(
+                `synchronized in ${end - start} 'time': ${end - start}`
+            );
+            syncOngoing = false;
+        } catch (e) {
+            logger.error(e);
+            throw e;
+        } finally {
+            syncOngoing = false;
+        }
     };
 
     const startServer = () => {

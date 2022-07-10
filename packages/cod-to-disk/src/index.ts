@@ -33,19 +33,19 @@ const getContext = async (): Promise<AppContext> => {
     };
 };
 
-(async () => {
-    try {
-        const context = await getContext();
+const main = async () => {
+    const context = await getContext();
 
-        // tslint:disable-next-line
-        console.time("application start");
-        await app(context);
+    // tslint:disable-next-line
+    console.time("application start");
+    await app(context);
 
-        // tslint:disable-next-line
-        console.timeEnd("application start");
-    } catch (e) {
-        // tslint:disable-next-line
-        console.error(e);
-        process.exit(-1);
-    }
-})();
+    // tslint:disable-next-line
+    console.timeEnd("application start");
+};
+
+main().catch((e) => {
+    // tslint:disable-next-line
+    console.error(e);
+    process.exit(-1);
+});
