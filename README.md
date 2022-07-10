@@ -36,6 +36,7 @@ docker-compose logs -f
 ### Deploy the website to Azure
 
 * Create github token with `packages:read` scope, and set as environment variable PACKAGES_TOKEN. [Learn more](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+* Add Azure subscription ID variable based of your account: AZURE_SUBSCRIPTION.
 
 ```bash
 ./deploy.sh

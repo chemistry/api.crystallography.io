@@ -2,7 +2,9 @@
 # Deployment parameters:
 export RESOURCE_GROUP="c14.test"
 export LOCATION="westeurope"
-export SUB_ID="95392ad1-c650-47f4-a85c-7d0df4e791e0"
+# Global parameters:
+# AZURE_SUBSCRIPTION_ID
+# PACKAGES_TOKEN
 
 # Should be unique for each deployment
 export DEPLOYMENT_NAME="c14-test"
@@ -13,8 +15,8 @@ export REGISTRY='ghcr.io'
 export REGISTRY_USER_NAME='vreshch'
 export ENVOROMENT_NAME='test'
 #------------------------------------------------------------------------------#
-# az login
-# az account set --subscription $SUB_ID
+az login
+az account set --subscription $AZURE_SUBSCRIPTION_ID
 
 echo "------------------------------------------------------------------------"
 echo "Create resource group..."
