@@ -100,6 +100,7 @@ jobs:
                       az group create -g ${{ secrets.RESOURCE_GROUP }} -l westeurope
                       az deployment group create -g ${{ secrets.RESOURCE_GROUP }} -f ./deploy/main.bicep \
                        -p \
+                          environmentName='dev' \
                           graphQLImage='${{ needs.build.outputs.containerImage-graphql-api }}' \
                           codToDiskImage='${{ needs.build.outputs.containerImage-cod-to-disk }}' \
                           mongoConnection='${{ secrets.MONGO_CONNECTION }}' \
