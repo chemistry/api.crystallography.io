@@ -1,5 +1,4 @@
 param location string
-param baseName string
 param environmentId string
 param containerImage string
 param containerRegistry string
@@ -12,7 +11,7 @@ param containerRegistryPassword string
 var containerAppName = 'graphql-app'
 
 resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
-    name: '${baseName}-${containerAppName}'
+    name: containerAppName
     location: location
     properties: {
         managedEnvironmentId: environmentId
