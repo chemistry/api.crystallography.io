@@ -50,3 +50,4 @@ resource environment_storage 'Microsoft.App/managedEnvironments/storages@2022-03
 }
 
 output environmentId string = environment.id
+output defaultDomain string = environment.properties.defaultDomain
