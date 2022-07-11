@@ -2,10 +2,10 @@ import { Readable } from "stream";
 import * as shell from "shelljs";
 import { ShellString, ExecOptions } from "shelljs";
 import { app, AppContext } from "./app";
-import { getChanel } from "./common/rabbitmq";
+import { getChanel } from "./common/azure-service-buss";
 import { getLogger } from "./common/logger";
 
-const QUEUE_NAME = "COD_FILE_CHANGED";
+const QUEUE_NAME = "COD_FILES_CHANGED";
 
 const getContext = async (): Promise<AppContext> => {
     const logger = await getLogger();
@@ -27,8 +27,14 @@ const getContext = async (): Promise<AppContext> => {
         execAsync: (command: string): Readable => {
             return shell.exec(command, { async: true, silent: true }).stdout;
         },
-        sendToQueue: (data: object): void => {
-            // chanel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(data)));
+        sendMessagesToQueue: (data: object[]): Promise<void> => {
+            return chanel.sendMessages(
+                data.map((item) => {
+                    return {
+                        body: Buffer.from(JSON.stringify(item)),
+                    };
+                })
+            );
         },
     };
 };

@@ -1,22 +1,23 @@
 import * as path from "path";
 import * as fs from "fs";
 import * as cron from "node-cron";
+import BatchStream from "batch-stream";
 import express from "express";
 import { ExecOptions, ShellString } from "shelljs";
 import { Readable, Transform, TransformCallback, Writable } from "stream";
 
 export interface AppContext {
     logger: {
-        trace: (message: string) => void;
-        info: (message: string) => void;
+        log: (message: string) => void;
         error: (message: string) => void;
+        trace: (message: string) => void;
     };
     exec: (
         command: string,
         options?: ExecOptions & { async?: false }
     ) => ShellString;
     execAsync: (command: string) => Readable;
-    sendToQueue: (data: object) => void;
+    sendMessagesToQueue: (data: object[]) => Promise<void>;
 }
 
 export interface CodFileRecord {
@@ -60,10 +61,31 @@ const sendInfoToConsole = () =>
         objectMode: true,
         write: (chunk, _encoding, done) => {
             count += chunk.length;
-            console.log(JSON.stringify(chunk));
+            console.log(`${JSON.stringify(chunk)}`);
             done();
         },
     });
+
+const batch = new BatchStream({ size: 10 });
+
+const getSendInfoToQueue = ({ sendMessagesToQueue }: AppContext) => {
+    return new Writable({
+        objectMode: true,
+        write: async (chunks, _encoding, done) => {
+            if (chunks && chunks.length > 0) {
+                const messages: any = [];
+                chunks.forEach((items: any) => {
+                    messages.push(...items);
+                });
+                count += messages.length;
+                if (messages.length > 0) {
+                    await sendMessagesToQueue(messages);
+                }
+            }
+            done();
+        },
+    });
+};
 
 const fetchDataFromCod = ({ logger, execAsync }: AppContext): Readable => {
     const isFirstStart = !fs.existsSync(DATA_PATH);
@@ -83,7 +105,8 @@ const synchronizeData = (context: AppContext) => {
     return new Promise<void>((resolve) => {
         fetchDataFromCod(context)
             .pipe(extractFileNames)
-            .pipe(sendInfoToConsole())
+            .pipe(batch)
+            .pipe(getSendInfoToQueue(context))
             .on("error", (e) => {
                 logger.error(String(e));
             })
@@ -99,20 +122,18 @@ export const app = async (context: AppContext) => {
 
     const syncAndLog = async () => {
         if (syncOngoing) {
-            logger.info("syncronization is ongoing ... skipping");
+            logger.log("syncronization is ongoing ... skipping");
             return;
         }
         try {
             syncOngoing = true;
-            logger.info("syncronization started");
+            logger.log("syncronization started");
             count = 0;
             const start = +new Date();
             await synchronizeData(context);
             const end = +new Date();
-            logger.info(`totally synchronized ${count}`);
-            logger.info(
-                `synchronized in ${end - start} 'time': ${end - start}`
-            );
+            logger.log(`totally synchronized ${count}`);
+            logger.log(`synchronized in ${end - start} 'time': ${end - start}`);
             syncOngoing = false;
         } catch (e) {
             logger.error(e);
@@ -136,7 +157,7 @@ export const app = async (context: AppContext) => {
     };
 
     cron.schedule("00 45 */1 * * *", syncAndLog);
-    logger.info(`subscribed cron events`);
+    logger.log(`subscribed cron events`);
 
     await startServer();
     await syncAndLog();

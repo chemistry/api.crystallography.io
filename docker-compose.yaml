@@ -11,6 +11,8 @@ services:
         build:
             context: ./packages/cod-to-disk
             dockerfile: Dockerfile
+        env_file:
+          - ./.env
 
 networks:
   net:
