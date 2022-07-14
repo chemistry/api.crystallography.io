@@ -9,6 +9,7 @@ param registryPassword string
 param location string = resourceGroup().location
 param graphQLImage string
 param codToDiskImage string
+param codProcessorImage string
 param registry string
 param mongoConnection string = ''
 var baseName = 'c14-${environmentName}'
@@ -86,6 +87,26 @@ module codToDisk 'containers/cod-to-disk.bicep' = {
                 name: 'DATA_PATH'
                 value: '/data'
             }
+        ]
+    }
+}
+
+// cod-processor (container-app.bicep)
+module codProcessor 'containers/cod-to-disk.bicep' = {
+    name: 'cod-processor'
+    dependsOn: [
+        environment
+        serviceBus
+    ]
+    params: {
+        location: location
+        environmentId: environment.outputs.environmentId
+        containerImage: codProcessorImage
+        containerRegistry: registry
+        containerRegistryUsername: registryUsername
+        containerRegistryPassword: registryPassword
+        sharedStorageName: sharedStorageName
+        environmentVars: [
         ]
     }
 }

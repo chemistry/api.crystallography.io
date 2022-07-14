@@ -25,6 +25,10 @@ jobs:
                             "imageName": "cod-to-disk",
                             "directory": "./packages/cod-to-disk",
                         },
+                        {
+                            "imageName": "cod-processor",
+                            "directory": "./packages/cod-processor",
+                        },
                     ]
         permissions:
             contents: read
@@ -32,6 +36,8 @@ jobs:
         outputs:
             containerImage-graphql-api: ${{ steps.image-tag.outputs.image-graphql-api }}
             containerImage-cod-to-disk: ${{ steps.image-tag.outputs.image-cod-to-disk }}
+            containerImage-cod-processor: ${{ steps.image-tag.outputs.cod-processor }}
+
         steps:
             - name: Checkout repository
               uses: actions/checkout@v2
@@ -103,6 +109,7 @@ jobs:
                           environmentName='dev' \
                           graphQLImage='${{ needs.build.outputs.containerImage-graphql-api }}' \
                           codToDiskImage='${{ needs.build.outputs.containerImage-cod-to-disk }}' \
+                          codProcessorImage='${{ needs.build.outputs.containerImage-cod-processor }}' \
                           mongoConnection='${{ secrets.MONGO_CONNECTION }}' \
                           registry=${{ env.REGISTRY }} \
                           registryUsername=${{ github.actor }} \
