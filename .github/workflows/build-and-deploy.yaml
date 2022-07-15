@@ -100,6 +100,7 @@ jobs:
                       echo 'Deploying to Azure with following parameters:'
                       echo ${{ needs.build.outputs.containerImage-graphql-api }}
                       echo ${{ needs.build.outputs.containerImage-cod-to-disk }}
+                      echo ${{ needs.build.outputs.containerImage-cod-processor }}
                       echo ${{ env.REGISTRY }}
                       echo ${{ github.actor }}
                       echo '===================================================='

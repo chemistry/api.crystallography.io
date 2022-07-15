@@ -92,7 +92,7 @@ module codToDisk 'containers/cod-to-disk.bicep' = {
 }
 
 // cod-processor (container-app.bicep)
-module codProcessor 'containers/cod-to-disk.bicep' = {
+module codProcessor 'containers/cod-processor.bicep' = {
     name: 'cod-processor'
     dependsOn: [
         environment
