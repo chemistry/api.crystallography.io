@@ -12,7 +12,7 @@ param codToDiskImage string
 param codProcessorImage string
 param registry string
 param mongoConnection string = ''
-var baseName = 'c14-${environmentName}'
+var baseName = 'c14io-${environmentName}'
 //---------------------------------------------------------------------------------//
 // Constants:
 var sharedStorageName = '${baseName}-share'
@@ -73,6 +73,7 @@ module codToDisk 'containers/cod-to-disk.bicep' = {
     name: 'cod-to-disk'
     dependsOn: [
         environment
+        serviceBus
     ]
     params: {
         location: location
@@ -82,12 +83,7 @@ module codToDisk 'containers/cod-to-disk.bicep' = {
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
         sharedStorageName: sharedStorageName
-        environmentVars: [
-            {
-                name: 'DATA_PATH'
-                value: '/data'
-            }
-        ]
+        serviceBusNamespaceName: serviceBusNamespaceName
     }
 }
 
@@ -105,8 +101,7 @@ module codProcessor 'containers/cod-processor.bicep' = {
         containerRegistry: registry
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
-        environmentVars: [
-        ]
+        serviceBusNamespaceName: serviceBusNamespaceName
     }
 }
 

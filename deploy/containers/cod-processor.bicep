@@ -3,12 +3,16 @@ param environmentId string
 param containerImage string
 param containerRegistry string
 param containerRegistryUsername string
-param environmentVars array = []
+param serviceBusNamespaceName string
 
 @secure()
 param containerRegistryPassword string
 
 var containerAppName = 'cod-processor'
+
+resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' existing = {
+    name: serviceBusNamespaceName
+}
 
 resource codProcessor 'Microsoft.App/containerApps@2022-03-01' = {
     name: containerAppName
@@ -20,6 +24,10 @@ resource codProcessor 'Microsoft.App/containerApps@2022-03-01' = {
                 {
                     name: 'registry-password'
                     value: containerRegistryPassword
+                }
+                {
+                    name: 'sb-root-connectionstring'
+                    value: listKeys('${serviceBus.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBus.apiVersion).primaryConnectionString
                 }
             ]
             registries: [
@@ -39,7 +47,12 @@ resource codProcessor 'Microsoft.App/containerApps@2022-03-01' = {
                 {
                     image: containerImage
                     name: containerAppName
-                    env: environmentVars
+                    env: [
+                        {
+                            name: 'SERVICEBUS_CONNECTION_STRING'
+                            secretRef: 'sb-root-connectionstring'
+                        }
+                    ]
                 }
             ]
             scale: {
