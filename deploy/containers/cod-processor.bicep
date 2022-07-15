@@ -44,7 +44,7 @@ resource codProcessor 'Microsoft.App/containerApps@2022-03-01' = {
             ]
             scale: {
                 minReplicas: 0
-                maxReplicas: 0
+                maxReplicas: 1
             }
         }
     }
