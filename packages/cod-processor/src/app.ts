@@ -1,43 +1,27 @@
-import * as path from "path";
-import * as fs from "fs";
-import express from "express";
-import { ExecOptions, ShellString } from "shelljs";
-import { Readable, Transform, TransformCallback, Writable } from "stream";
-
-export interface AppContext {
-    logger: {
-        log: (message: string) => void;
-        error: (message: string) => void;
-        trace: (message: string) => void;
-    };
-    exec: (
-        command: string,
-        options?: ExecOptions & { async?: false }
-    ) => ShellString;
-    execAsync: (command: string) => Readable;
-    sendMessagesToQueue: (data: object[]) => Promise<void>;
-}
+import { startDummyServer } from "./common/dummy-server";
+import { getMessageProcessor } from "./process";
 
 export interface CodFileRecord {
     fileName: string;
     codId: string;
 }
+export type messageProcessor = (message: CodFileRecord) => Promise<void>;
+export interface AppContext {
+    logger: {
+        log: (message: string) => void;
+        error: (message: string) => void;
+    };
+    subscribe: (fn: messageProcessor) => Promise<void>;
+}
 
 export const app = async (context: AppContext) => {
-    const { logger } = context;
+    const { logger, subscribe } = context;
 
-    const startServer = () => {
-        new Promise<void>((resolve) => {
-            const api = express();
+    const processor = await getMessageProcessor(context);
 
-            api.get("/", (_, res) => {
-                res.send("");
-            });
-            api.listen(8080, resolve);
-        });
-    };
+    await subscribe(processor);
 
     logger.log(`subscribed cron events`);
 
-    await startServer();
+    await startDummyServer();
 };

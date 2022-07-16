@@ -6,8 +6,5 @@ export const getLogger = async () => {
         error: async (text: string) => {
             console.error(text);
         },
-        trace: async (text: string) => {
-            console.trace(text);
-        },
     };
 };
