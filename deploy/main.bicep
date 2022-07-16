@@ -38,13 +38,6 @@ resource myStorage 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-0
     dependsOn: []
 }
 
-resource toProcessQueue 'Microsoft.Storage/storageAccounts/queueServices/queues@2021-09-01' = {
-    name: '${storage.name}/default/${queueName}'
-    properties: {
-        metadata: {}
-    }
-}
-
 resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' = {
     name: serviceBusNamespaceName
     location: location

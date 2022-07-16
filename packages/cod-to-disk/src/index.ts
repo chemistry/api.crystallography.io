@@ -2,7 +2,7 @@ import { Readable } from "stream";
 import * as shell from "shelljs";
 import { ShellString, ExecOptions } from "shelljs";
 import { app, AppContext } from "./app";
-import { getChanel } from "./common/azure-service-buss";
+import { getChanel } from "./common/azure-service-buss-sender";
 import { getLogger } from "./common/logger";
 
 const QUEUE_NAME = "COD_FILES_CHANGED";
