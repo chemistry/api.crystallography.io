@@ -4,6 +4,7 @@ param containerImage string
 param containerRegistry string
 param containerRegistryUsername string
 param serviceBusNamespaceName string
+param codFilesChangedQueueName string
 
 @secure()
 param containerRegistryPassword string
@@ -52,12 +53,34 @@ resource codProcessor 'Microsoft.App/containerApps@2022-03-01' = {
                             name: 'SERVICEBUS_CONNECTION_STRING'
                             secretRef: 'sb-root-connectionstring'
                         }
+                        {
+                            name: 'QUEUE_NAME'
+                            value: codFilesChangedQueueName
+                        }
                     ]
                 }
             ]
             scale: {
                 minReplicas: 0
                 maxReplicas: 1
+                rules: [
+                    {
+                        name: 'service-bus-scale-rule'
+                        custom: {
+                            type: 'azure-servicebus'
+                            metadata: {
+                                queueName: codFilesChangedQueueName
+                                messageCount: '5'
+                            }
+                            auth: [
+                                {
+                                    secretRef: 'sb-root-connectionstring'
+                                    triggerParameter: 'connection'
+                                }
+                            ]
+                        }
+                    }
+                ]
             }
         }
     }

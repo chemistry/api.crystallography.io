@@ -5,6 +5,7 @@ param containerRegistry string
 param containerRegistryUsername string
 param sharedStorageName string
 param serviceBusNamespaceName string
+param codFilesChangedQueueName string
 
 @secure()
 param containerRegistryPassword string
@@ -56,6 +57,10 @@ resource codToDiskApp 'Microsoft.App/containerApps@2022-03-01' = {
                         {
                             name: 'SERVICEBUS_CONNECTION_STRING'
                             secretRef: 'sb-root-connectionstring'
+                        }
+                        {
+                            name: 'QUEUE_NAME'
+                            value: codFilesChangedQueueName
                         }
                     ]
                     volumeMounts: [

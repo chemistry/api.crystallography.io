@@ -77,7 +77,7 @@ const getSendInfoToQueue = ({ sendMessagesToQueue }: AppContext) => {
                     messages.push(...items);
                 });
                 count += messages.length;
-                if (count % REPORT_COUNT === 0) {
+                if (count % REPORT_COUNT === 0 && count > 0) {
                     console.log(`${count} files processed`);
                 }
                 if (messages.length > 0) {

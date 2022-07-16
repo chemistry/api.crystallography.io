@@ -17,8 +17,8 @@ var baseName = 'c14io-${environmentName}'
 // Constants:
 var sharedStorageName = '${baseName}-share'
 var serviceBusNamespaceName = '${baseName}-service-bus'
+var codFilesChangedQueueName = 'COD_FILES_CHANGED'
 var fileShareName = 'data'
-var queueName = 'queue'
 //---------------------------------------------------------------------------------//
 // Resources:
 resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
@@ -46,6 +46,16 @@ resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' = {
         tier: 'Basic'
     }
 }
+
+resource codFilesChangedQueue 'Microsoft.ServiceBus/namespaces/queues@2022-01-01-preview' = {
+    name: format('{0}/{1}', serviceBusNamespaceName, codFilesChangedQueueName)
+    parent: serviceBus
+    properties: {
+        lockDuration: 'PT5M'
+        maxDeliveryCount: 10
+    }
+}
+
 //---------------------------------------------------------------------------------//
 // Container App:
 // Container Apps Environment (environment.bicep)
@@ -67,6 +77,7 @@ module codToDisk 'containers/cod-to-disk.bicep' = {
     dependsOn: [
         environment
         serviceBus
+        codFilesChangedQueue
     ]
     params: {
         location: location
@@ -77,6 +88,7 @@ module codToDisk 'containers/cod-to-disk.bicep' = {
         containerRegistryPassword: registryPassword
         sharedStorageName: sharedStorageName
         serviceBusNamespaceName: serviceBusNamespaceName
+        codFilesChangedQueueName: codFilesChangedQueueName
     }
 }
 
@@ -86,6 +98,7 @@ module codProcessor 'containers/cod-processor.bicep' = {
     dependsOn: [
         environment
         serviceBus
+        codFilesChangedQueue
     ]
     params: {
         location: location
@@ -95,6 +108,7 @@ module codProcessor 'containers/cod-processor.bicep' = {
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
         serviceBusNamespaceName: serviceBusNamespaceName
+        codFilesChangedQueueName: codFilesChangedQueueName
     }
 }
 
