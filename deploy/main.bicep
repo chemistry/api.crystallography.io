@@ -17,7 +17,6 @@ var baseName = 'c14io-${environmentName}'
 // Constants:
 var sharedStorageName = '${baseName}-share'
 var serviceBusNamespaceName = '${baseName}-service-bus'
-var codFilesChangedQueueName = 'COD_FILES_CHANGED'
 var fileShareName = 'data'
 //---------------------------------------------------------------------------------//
 // Resources:
@@ -32,12 +31,13 @@ resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
         supportsHttpsTrafficOnly: true
     }
 }
-
+// File Shares
 resource myStorage 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' = {
     name: '${storage.name}/default/${fileShareName}'
     dependsOn: []
 }
 
+// Service Buss
 resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' = {
     name: serviceBusNamespaceName
     location: location
@@ -46,8 +46,21 @@ resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' = {
         tier: 'Basic'
     }
 }
+
+// Table
+param tables array = [
+    {
+        container: 'default'
+        name: 'sync-orchestrator'
+    }
+]
+resource storageAccountTables 'Microsoft.Storage/storageAccounts/tableServices/tables@2021-02-01' = [for table in tables: {
+    name: '${storage.name}/${table.container}/${table.name}'
+}]
+
+// Queue
 resource codFilesChangedQueue 'Microsoft.ServiceBus/namespaces/queues@2022-01-01-preview' = {
-    name: codFilesChangedQueueName
+    name: 'COD_FILES_CHANGED'
     parent: serviceBus
     properties: {
         lockDuration: 'PT5M'
@@ -76,7 +89,6 @@ module codToDisk 'containers/cod-to-disk.bicep' = {
     dependsOn: [
         environment
         serviceBus
-        codFilesChangedQueue
     ]
     params: {
         location: location
@@ -87,7 +99,7 @@ module codToDisk 'containers/cod-to-disk.bicep' = {
         containerRegistryPassword: registryPassword
         sharedStorageName: sharedStorageName
         serviceBusNamespaceName: serviceBusNamespaceName
-        codFilesChangedQueueName: codFilesChangedQueueName
+        codFilesChangedQueueName: codFilesChangedQueue.name
     }
 }
 
@@ -97,7 +109,6 @@ module codProcessor 'containers/cod-processor.bicep' = {
     dependsOn: [
         environment
         serviceBus
-        codFilesChangedQueue
     ]
     params: {
         location: location
@@ -107,7 +118,7 @@ module codProcessor 'containers/cod-processor.bicep' = {
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
         serviceBusNamespaceName: serviceBusNamespaceName
-        codFilesChangedQueueName: codFilesChangedQueueName
+        codFilesChangedQueueName: codFilesChangedQueue.name
     }
 }
 
