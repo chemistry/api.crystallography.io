@@ -29,6 +29,10 @@ jobs:
                             "imageName": "cod-processor",
                             "directory": "./packages/cod-processor",
                         },
+                        {
+                            "imageName": "sync-orchestrator",
+                            "directory": "./packages/sync-orchestrator",
+                        },
                     ]
         permissions:
             contents: read
@@ -37,6 +41,7 @@ jobs:
             containerImage-graphql-api: ${{ steps.image-tag.outputs.image-graphql-api }}
             containerImage-cod-to-disk: ${{ steps.image-tag.outputs.image-cod-to-disk }}
             containerImage-cod-processor: ${{ steps.image-tag.outputs.image-cod-processor }}
+            containerImage-sync-orchestrator: ${{ steps.image-tag.outputs.image-sync-orchestrator }}
 
         steps:
             - name: Checkout repository
@@ -101,6 +106,7 @@ jobs:
                       echo ${{ needs.build.outputs.containerImage-graphql-api }}
                       echo ${{ needs.build.outputs.containerImage-cod-to-disk }}
                       echo ${{ needs.build.outputs.containerImage-cod-processor }}
+                      echo ${{ needs.build.outputs.containerImage-sync-orchestrator }}
                       echo ${{ env.REGISTRY }}
                       echo ${{ github.actor }}
                       echo '===================================================='

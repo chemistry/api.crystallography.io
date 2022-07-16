@@ -31,20 +31,11 @@ resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
         supportsHttpsTrafficOnly: true
     }
 }
+
 // File Shares
 resource myStorage 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' = {
     name: '${storage.name}/default/${fileShareName}'
     dependsOn: []
-}
-
-// Service Buss
-resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' = {
-    name: serviceBusNamespaceName
-    location: location
-    sku: {
-        name: 'Basic'
-        tier: 'Basic'
-    }
 }
 
 // Table
@@ -57,6 +48,16 @@ param tables array = [
 resource storageAccountTables 'Microsoft.Storage/storageAccounts/tableServices/tables@2021-02-01' = [for table in tables: {
     name: '${storage.name}/${table.container}/${table.name}'
 }]
+
+// Service Buss
+resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' = {
+    name: serviceBusNamespaceName
+    location: location
+    sku: {
+        name: 'Basic'
+        tier: 'Basic'
+    }
+}
 
 // Queue
 resource codFilesChangedQueue 'Microsoft.ServiceBus/namespaces/queues@2022-01-01-preview' = {
