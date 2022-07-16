@@ -51,7 +51,7 @@ resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' = {
 param tables array = [
     {
         container: 'default'
-        name: 'sync-orchestrator'
+        name: 'synclogs'
     }
 ]
 resource storageAccountTables 'Microsoft.Storage/storageAccounts/tableServices/tables@2021-02-01' = [for table in tables: {
