@@ -46,9 +46,8 @@ resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' = {
         tier: 'Basic'
     }
 }
-
 resource codFilesChangedQueue 'Microsoft.ServiceBus/namespaces/queues@2022-01-01-preview' = {
-    name: format('{0}/{1}', serviceBusNamespaceName, codFilesChangedQueueName)
+    name: codFilesChangedQueueName
     parent: serviceBus
     properties: {
         lockDuration: 'PT5M'
