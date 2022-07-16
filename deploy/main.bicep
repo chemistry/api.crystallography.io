@@ -7,6 +7,7 @@ param registryPassword string
 //---------------------------------------------------------------------------------//
 // Optional arguments:
 param location string = resourceGroup().location
+param syncOrchestratorImage string
 param graphQLImage string
 param codToDiskImage string
 param codProcessorImage string
@@ -70,6 +71,7 @@ resource codFilesChangedQueue 'Microsoft.ServiceBus/namespaces/queues@2022-01-01
 }
 
 //---------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------------//
 // Container App:
 // Container Apps Environment (environment.bicep)
 module environment 'environment.bicep' = {
@@ -83,8 +85,25 @@ module environment 'environment.bicep' = {
         sharedStorageName: sharedStorageName
     }
 }
+//---------------------------------------------------------------------------------//
+// Containers
+// sync-orchestrator (sync-orchestrator.bicep)
+module syncOrchestrator 'containers/sync-orchestrator.bicep' = {
+    name: 'sync-orchestrator'
+    dependsOn: [
+        environment
+        serviceBus
+    ]
+    params: {
+        location: location
+        environmentId: environment.outputs.environmentId
+        containerImage: syncOrchestratorImage
+        containerRegistry: registry
+        containerRegistryUsername: registryUsername
+        containerRegistryPassword: registryPassword
+    }
+}
 
-// cod-to-disk (container-app.bicep)
 module codToDisk 'containers/cod-to-disk.bicep' = {
     name: 'cod-to-disk'
     dependsOn: [
