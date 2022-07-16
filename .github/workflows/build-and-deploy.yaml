@@ -114,7 +114,7 @@ jobs:
                       az deployment group create -g ${{ secrets.RESOURCE_GROUP }} -f ./deploy/main.bicep \
                        -p \
                           environmentName='dev' \
-                          syncOrchestratorImage='${{ needs.build.outputs.containerImage-sync-orchestrator }}'
+                          syncOrchestratorImage='${{ needs.build.outputs.containerImage-sync-orchestrator }}' \
                           graphQLImage='${{ needs.build.outputs.containerImage-graphql-api }}' \
                           codToDiskImage='${{ needs.build.outputs.containerImage-cod-to-disk }}' \
                           codProcessorImage='${{ needs.build.outputs.containerImage-cod-processor }}' \

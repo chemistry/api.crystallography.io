@@ -92,7 +92,6 @@ module syncOrchestrator 'containers/sync-orchestrator.bicep' = {
     name: 'sync-orchestrator'
     dependsOn: [
         environment
-        serviceBus
     ]
     params: {
         location: location
