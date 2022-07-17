@@ -3,11 +3,16 @@ param environmentId string
 param containerImage string
 param containerRegistry string
 param containerRegistryUsername string
+param storageName string
 
 @secure()
 param containerRegistryPassword string
 
 var containerAppName = 'sync-orchestrator'
+
+resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' existing = {
+    name: storageName
+}
 
 resource syncOrchestrator 'Microsoft.App/containerApps@2022-03-01' = {
     name: containerAppName
@@ -39,6 +44,10 @@ resource syncOrchestrator 'Microsoft.App/containerApps@2022-03-01' = {
                     image: containerImage
                     name: containerAppName
                     env: [
+                        {
+                            name: 'TABLE_CONNECTION_STRING'
+                            value: 'DefaultEndpointsProtocol=https;AccountName=${storage.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storage.id, storage.apiVersion).keys[0].value}'
+                        }
                     ]
                 }
             ]

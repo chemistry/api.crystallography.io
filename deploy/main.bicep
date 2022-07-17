@@ -100,6 +100,7 @@ module syncOrchestrator 'containers/sync-orchestrator.bicep' = {
         containerRegistry: registry
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
+        storageName: storage.name
     }
 }
 

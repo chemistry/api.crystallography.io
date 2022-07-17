@@ -1,14 +1,14 @@
 import { app, AppContext } from "./app";
+import { getTableClient } from "./common/azure-table-storage";
 import { getLogger } from "./common/logger";
 
 const getContext = async (): Promise<AppContext> => {
     const logger = await getLogger();
+    const { client } = await getTableClient("synclogs");
 
     return {
         logger,
-        sendMessagesToQueue: (data: object[]): void => {
-            console.log("sendMessagesToQueue");
-        },
+        client,
     };
 };
 
