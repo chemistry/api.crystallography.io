@@ -3,6 +3,7 @@ param environmentId string
 param containerImage string
 param containerRegistry string
 param containerRegistryUsername string
+param serviceBusNamespaceName string
 param scheduleCodToDiskQueue string
 param storageName string
 
@@ -13,6 +14,9 @@ var containerAppName = 'sync-orchestrator'
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' existing = {
     name: storageName
+}
+resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' existing = {
+    name: serviceBusNamespaceName
 }
 
 resource syncOrchestrator 'Microsoft.App/containerApps@2022-03-01' = {
@@ -25,6 +29,10 @@ resource syncOrchestrator 'Microsoft.App/containerApps@2022-03-01' = {
                 {
                     name: 'registry-password'
                     value: containerRegistryPassword
+                }
+                {
+                    name: 'sb-root-connectionstring'
+                    value: listKeys('${serviceBus.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBus.apiVersion).primaryConnectionString
                 }
             ]
             registries: [
@@ -52,6 +60,10 @@ resource syncOrchestrator 'Microsoft.App/containerApps@2022-03-01' = {
                         {
                             name: 'SCHEDULE_COD_TO_DISK_QUEUE'
                             value: scheduleCodToDiskQueue
+                        }
+                        {
+                            name: 'SERVICEBUS_CONNECTION_STRING'
+                            secretRef: 'sb-root-connectionstring'
                         }
                     ]
                 }

@@ -117,6 +117,7 @@ module syncOrchestrator 'containers/sync-orchestrator.bicep' = {
         containerRegistryPassword: registryPassword
         storageName: storage.name
         scheduleCodToDiskQueue: scheduleCodToDiskQueue
+        serviceBusNamespaceName: serviceBusNamespaceName
     }
 }
 
