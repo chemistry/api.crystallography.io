@@ -80,8 +80,8 @@ resource queuesList 'Microsoft.ServiceBus/namespaces/queues@2022-01-01-preview' 
     }
 }]
 
-var codFilesChangedQueue = queuesList[0]
-var scheduleCodToDiskQueue = queuesList[1]
+var codFilesChangedQueue = queues[0].name
+var scheduleCodToDiskQueue = queues[1].name
 
 //---------------------------------------------------------------------------------//
 //---------------------------------------------------------------------------------//
@@ -105,6 +105,8 @@ module syncOrchestrator 'containers/sync-orchestrator.bicep' = {
     name: 'sync-orchestrator'
     dependsOn: [
         environment
+        serviceBus
+        queuesList[0]
     ]
     params: {
         location: location
@@ -114,7 +116,7 @@ module syncOrchestrator 'containers/sync-orchestrator.bicep' = {
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
         storageName: storage.name
-        scheduleCodToDiskQueue: scheduleCodToDiskQueue.name
+        scheduleCodToDiskQueue: scheduleCodToDiskQueue
     }
 }
 
@@ -123,6 +125,7 @@ module codToDisk 'containers/cod-to-disk.bicep' = {
     dependsOn: [
         environment
         serviceBus
+        queuesList[1]
     ]
     params: {
         location: location
@@ -133,7 +136,7 @@ module codToDisk 'containers/cod-to-disk.bicep' = {
         containerRegistryPassword: registryPassword
         sharedStorageName: sharedStorageName
         serviceBusNamespaceName: serviceBusNamespaceName
-        codFilesChangedQueueName: codFilesChangedQueue.name
+        codFilesChangedQueueName: codFilesChangedQueue
     }
 }
 
@@ -143,6 +146,7 @@ module codProcessor 'containers/cod-processor.bicep' = {
     dependsOn: [
         environment
         serviceBus
+        queuesList[1]
     ]
     params: {
         location: location
@@ -152,7 +156,7 @@ module codProcessor 'containers/cod-processor.bicep' = {
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
         serviceBusNamespaceName: serviceBusNamespaceName
-        codFilesChangedQueueName: codFilesChangedQueue.name
+        codFilesChangedQueueName: codFilesChangedQueue
     }
 }
 

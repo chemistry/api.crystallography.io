@@ -39,6 +39,7 @@ export const app = async (context: AppContext) => {
         if (messages.length > MESSAGES_LENGTH) {
             messages = messages.slice(0, MESSAGES_LENGTH);
         }
+        logger.log(`${task}: ${message}`);
 
         await client.createEntity({
             partitionKey: task,
