@@ -9,7 +9,13 @@ export interface AppContext {
         log: (message: string) => void;
         error: (message: string) => void;
     };
-    client: TableClient;
+    logToTable: ({
+        correlationId,
+        message,
+    }: {
+        correlationId: string | undefined;
+        message: string;
+    }) => Promise<void>;
     sendMessages: (
         queueName: string,
         messages: ServiceBusMessage[]
@@ -31,7 +37,7 @@ const schedule = [
 ];
 
 export const app = async (context: AppContext) => {
-    const { logger, client, sendMessages } = context;
+    const { logger, logToTable, sendMessages } = context;
 
     const saveIntoToLogs = async ({
         message,
@@ -42,15 +48,14 @@ export const app = async (context: AppContext) => {
         task: string;
         correlationId: string;
     }) => {
-        messages.unshift(`${task}: ${correlationId} - ${message}`);
+        messages.unshift(`${correlationId} - ${task}:${message}`);
         if (messages.length > MESSAGES_LENGTH) {
             messages = messages.slice(0, MESSAGES_LENGTH);
         }
-        logger.log(`${task}: ${correlationId} - ${message}`);
+        logger.log(`${correlationId} - ${task}:${message}`);
 
-        await client.createEntity({
-            rowKey: correlationId,
-            partitionKey: task,
+        await logToTable({
+            correlationId,
             message,
         });
     };
