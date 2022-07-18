@@ -1,6 +1,8 @@
 import * as cron from "node-cron";
+import { v4 as uuid } from "uuid";
 import { TableClient } from "@azure/data-tables";
 import { startDummyServer } from "./common/dummy-server";
+import { ServiceBusMessage } from "@azure/service-bus";
 
 export interface AppContext {
     logger: {
@@ -8,7 +10,10 @@ export interface AppContext {
         error: (message: string) => void;
     };
     client: TableClient;
-    sendMessages: (queueName: string, messages: any[]) => Promise<void>;
+    sendMessages: (
+        queueName: string,
+        messages: ServiceBusMessage[]
+    ) => Promise<void>;
 }
 
 const MESSAGES_LENGTH = 100;
@@ -31,19 +36,21 @@ export const app = async (context: AppContext) => {
     const saveIntoToLogs = async ({
         message,
         task,
+        correlationId,
     }: {
         message: string;
         task: string;
+        correlationId: string;
     }) => {
-        messages.unshift(`${task}: ${message}`);
+        messages.unshift(`${task}: ${correlationId} - ${message}`);
         if (messages.length > MESSAGES_LENGTH) {
             messages = messages.slice(0, MESSAGES_LENGTH);
         }
-        logger.log(`${task}: ${message}`);
+        logger.log(`${task}: ${correlationId} - ${message}`);
 
         await client.createEntity({
+            rowKey: correlationId,
             partitionKey: task,
-            rowKey: `${Date.now()}`,
             message,
         });
     };
@@ -51,13 +58,13 @@ export const app = async (context: AppContext) => {
     schedule.forEach(async ({ cronTime, task, queue }) => {
         cron.schedule(cronTime, async () => {
             const message = "task started";
-            const start = Date.now();
+            const correlationId = uuid();
 
             // send message action queue
             await sendMessages(queue, [
                 {
-                    task,
-                    message,
+                    body: { task, message },
+                    correlationId,
                 },
             ]);
 
@@ -65,6 +72,7 @@ export const app = async (context: AppContext) => {
             await saveIntoToLogs({
                 task,
                 message,
+                correlationId,
             });
         });
     });

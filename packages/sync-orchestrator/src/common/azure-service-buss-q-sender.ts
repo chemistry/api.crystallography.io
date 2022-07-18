@@ -14,10 +14,7 @@ export const getSender = async () => {
             messages: ServiceBusMessage[]
         ) => {
             const sender = await sbClient.createSender(queueName);
-            const messagesToSend = messages.map((message) => ({
-                body: message,
-            }));
-            await sender.sendMessages(messagesToSend);
+            await sender.sendMessages(messages);
             await sender.close();
         },
     };
