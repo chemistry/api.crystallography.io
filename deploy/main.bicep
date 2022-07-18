@@ -43,7 +43,7 @@ resource myStorage 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-0
 param tables array = [
     {
         container: 'default'
-        name: 'synclogs'
+        name: 'logs'
     }
 ]
 resource storageAccountTables 'Microsoft.Storage/storageAccounts/tableServices/tables@2021-02-01' = [for table in tables: {
@@ -60,15 +60,28 @@ resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' = {
     }
 }
 
-// Queue
-resource codFilesChangedQueue 'Microsoft.ServiceBus/namespaces/queues@2022-01-01-preview' = {
-    name: 'COD_FILES_CHANGED'
+// Queues
+param queues array = [
+    {
+        name: 'cod_files_changed'
+        maxDeliveryCount: 10
+    }
+    {
+        name: 'schedule-cod-to-disk'
+        maxDeliveryCount: 1
+    }
+]
+resource queuesList 'Microsoft.ServiceBus/namespaces/queues@2022-01-01-preview' = [for queue in queues: {
+    name: '${queue.name}'
     parent: serviceBus
     properties: {
         lockDuration: 'PT5M'
-        maxDeliveryCount: 10
+        maxDeliveryCount: int(queue.maxDeliveryCount)
     }
-}
+}]
+
+var codFilesChangedQueue = queuesList[0]
+var scheduleCodToDiskQueue = queuesList[1]
 
 //---------------------------------------------------------------------------------//
 //---------------------------------------------------------------------------------//
@@ -101,6 +114,7 @@ module syncOrchestrator 'containers/sync-orchestrator.bicep' = {
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
         storageName: storage.name
+        scheduleCodToDiskQueue: scheduleCodToDiskQueue.name
     }
 }
 

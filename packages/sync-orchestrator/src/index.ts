@@ -1,14 +1,17 @@
+import { getSender } from "./common/azure-service-buss-q-sender";
 import { app, AppContext } from "./app";
 import { getTableClient } from "./common/azure-table-storage";
 import { getLogger } from "./common/logger";
 
 const getContext = async (): Promise<AppContext> => {
     const logger = await getLogger();
-    const { client } = await getTableClient("synclogs");
+    const { client } = await getTableClient("logs");
+    const { sendMessages } = await getSender();
 
     return {
         logger,
         client,
+        sendMessages,
     };
 };
 

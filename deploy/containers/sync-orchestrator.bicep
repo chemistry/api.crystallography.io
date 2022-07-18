@@ -3,6 +3,7 @@ param environmentId string
 param containerImage string
 param containerRegistry string
 param containerRegistryUsername string
+param scheduleCodToDiskQueue string
 param storageName string
 
 @secure()
@@ -47,6 +48,10 @@ resource syncOrchestrator 'Microsoft.App/containerApps@2022-03-01' = {
                         {
                             name: 'TABLE_CONNECTION_STRING'
                             value: 'DefaultEndpointsProtocol=https;AccountName=${storage.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storage.id, storage.apiVersion).keys[0].value}'
+                        }
+                        {
+                            name: 'SCHEDULE_COD_TO_DISK_QUEUE'
+                            value: scheduleCodToDiskQueue
                         }
                     ]
                 }
