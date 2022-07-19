@@ -1,6 +1,5 @@
 import * as cron from "node-cron";
 import { v4 as uuid } from "uuid";
-import { TableClient } from "@azure/data-tables";
 import { startDummyServer } from "./common/dummy-server";
 import { ServiceBusMessage } from "@azure/service-bus";
 
