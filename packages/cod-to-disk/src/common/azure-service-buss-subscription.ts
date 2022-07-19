@@ -29,7 +29,10 @@ export const getSubscriptionChanel = async <T>(queueName: string) => {
         subscribe: async (processMessage: messageProcessor<T>) => {
             const { close } = await receiver.subscribe({
                 processMessage: async (message: ServiceBusReceivedMessage) => {
-                    const messageBody: T = message.body;
+                    const messageBody: T = {
+                        ...message.body,
+                        correlationId: message.correlationId,
+                    };
                     await processMessage(messageBody);
                 },
                 processError,

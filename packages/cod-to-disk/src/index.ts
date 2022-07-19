@@ -32,11 +32,15 @@ const getContext = async (): Promise<AppContext> => {
         execAsync: (command: string): Readable => {
             return shell.exec(command, { async: true, silent: true }).stdout;
         },
-        sendMessagesToQueue: (data: object[]): Promise<void> => {
+        sendMessagesToQueue: (
+            data: object[],
+            correlationId?: string
+        ): Promise<void> => {
             return chanel.sendMessages(
                 data.map((item) => {
                     return {
                         body: Buffer.from(JSON.stringify(item)),
+                        correlationId,
                     };
                 })
             );

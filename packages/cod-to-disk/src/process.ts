@@ -53,7 +53,10 @@ const sendInfoToConsole = () =>
 
 const batch = new BatchStream({ size: 10 });
 
-const getSendInfoToQueue = ({ sendMessagesToQueue }: AppContext) => {
+const getSendInfoToQueue = (
+    { sendMessagesToQueue }: AppContext,
+    correlationId: string
+) => {
     return new Writable({
         objectMode: true,
         write: async (chunks, _encoding, done) => {
@@ -67,7 +70,7 @@ const getSendInfoToQueue = ({ sendMessagesToQueue }: AppContext) => {
                     console.log(`${count} files processed`);
                 }
                 if (messages.length > 0) {
-                    await sendMessagesToQueue(messages);
+                    await sendMessagesToQueue(messages, correlationId);
                 }
             }
             done();
@@ -87,14 +90,14 @@ const fetchDataFromCod = ({ logger, execAsync }: AppContext): Readable => {
     return execAsync(cmd);
 };
 
-const synchronizeData = (context: AppContext) => {
+const synchronizeData = (context: AppContext, correlationId: string) => {
     const { logger } = context;
 
     return new Promise<void>((resolve) => {
         fetchDataFromCod(context)
             .pipe(extractFileNames)
             .pipe(batch)
-            .pipe(getSendInfoToQueue(context))
+            .pipe(getSendInfoToQueue(context, correlationId))
             .on("error", (e) => {
                 logger.error(String(e));
             })
@@ -122,7 +125,7 @@ export const getMessageProcessor = (
             logger.log("syncronization started");
             count = 0;
             const start = +new Date();
-            await synchronizeData(context);
+            await synchronizeData(context, correlationId);
             const end = +new Date();
             logger.log(`totally synchronized ${count}`);
             logger.log(`synchronized in ${end - start} 'time': ${end - start}`);

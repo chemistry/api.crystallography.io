@@ -17,7 +17,10 @@ export interface AppContext {
         options?: ExecOptions & { async?: false }
     ) => ShellString;
     execAsync: (command: string) => Readable;
-    sendMessagesToQueue: (data: object[]) => Promise<void>;
+    sendMessagesToQueue: (
+        data: object[],
+        correlationId?: string
+    ) => Promise<void>;
     subscribe: (fn: messageProcessor<QueueMessage>) => Promise<void>;
 }
 
