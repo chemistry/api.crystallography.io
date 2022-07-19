@@ -5,6 +5,11 @@ export interface CodFileRecord {
     fileName: string;
     codId: string;
 }
+export interface CodFileRecord {
+    fileName: string;
+    codId: string;
+}
+
 export type messageProcessor = (message: CodFileRecord) => Promise<void>;
 export interface AppContext {
     logger: {
@@ -21,7 +26,7 @@ export const app = async (context: AppContext) => {
 
     await subscribe(processor);
 
-    logger.log(`subscribed cron events`);
+    logger.log(`subscribed event buss`);
 
     await startDummyServer();
 };

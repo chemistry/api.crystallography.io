@@ -1,15 +1,20 @@
 import { Readable } from "stream";
 import * as shell from "shelljs";
 import { ShellString, ExecOptions } from "shelljs";
-import { app, AppContext } from "./app";
+import { app, AppContext, QueueMessage } from "./app";
+import { getSubscriptionChanel } from "./common/azure-service-buss-subscription";
 import { getChanel } from "./common/azure-service-buss-sender";
 import { getLogger } from "./common/logger";
 
-const QUEUE_NAME = "COD_FILES_CHANGED";
+const QUEUE_NAME = "cod_files_changed";
+const SUBSCRIPTION_QUEUE_NAME = "schedule-cod-to-disk";
 
 const getContext = async (): Promise<AppContext> => {
     const logger = await getLogger();
     const chanel = await getChanel(QUEUE_NAME);
+    const { subscribe } = await getSubscriptionChanel<QueueMessage>(
+        SUBSCRIPTION_QUEUE_NAME
+    );
 
     process.on("exit", (code) => {
         // tslint:disable-next-line
@@ -36,6 +41,7 @@ const getContext = async (): Promise<AppContext> => {
                 })
             );
         },
+        subscribe,
     };
 };
 
