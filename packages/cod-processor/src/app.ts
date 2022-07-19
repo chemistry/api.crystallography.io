@@ -5,10 +5,6 @@ export interface CodFileRecord {
     fileName: string;
     codId: string;
 }
-export interface CodFileRecord {
-    fileName: string;
-    codId: string;
-}
 
 export type messageProcessor = (message: CodFileRecord) => Promise<void>;
 export interface AppContext {

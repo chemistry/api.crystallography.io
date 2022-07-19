@@ -1,4 +1,4 @@
-import { app, AppContext } from "./app";
+import { app, AppContext, CodFileRecord } from "./app";
 import { getSubscriptionChanel } from "./common/azure-service-buss-subscription";
 import { getLogger } from "./common/logger";
 
@@ -6,7 +6,9 @@ const QUEUE_NAME = "COD_FILES_CHANGED";
 
 const getContext = async (): Promise<AppContext> => {
     const logger = await getLogger();
-    const { subscribe } = await getSubscriptionChanel(QUEUE_NAME);
+    const { subscribe } = await getSubscriptionChanel<CodFileRecord>(
+        QUEUE_NAME
+    );
 
     process.on("exit", (code) => {
         // tslint:disable-next-line
