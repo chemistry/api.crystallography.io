@@ -80,9 +80,6 @@ resource queuesList 'Microsoft.ServiceBus/namespaces/queues@2022-01-01-preview' 
     }
 }]
 
-var codFilesChangedQueue = queues[0].name
-var scheduleCodToDiskQueue = queues[1].name
-
 //---------------------------------------------------------------------------------//
 //---------------------------------------------------------------------------------//
 // Container App:
@@ -116,7 +113,6 @@ module syncOrchestrator 'containers/sync-orchestrator.bicep' = {
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
         storageName: storage.name
-        scheduleCodToDiskQueue: scheduleCodToDiskQueue
         serviceBusNamespaceName: serviceBusNamespaceName
     }
 }
@@ -137,7 +133,6 @@ module codToDisk 'containers/cod-to-disk.bicep' = {
         containerRegistryPassword: registryPassword
         sharedStorageName: sharedStorageName
         serviceBusNamespaceName: serviceBusNamespaceName
-        codFilesChangedQueueName: codFilesChangedQueue
     }
 }
 
@@ -157,7 +152,6 @@ module codProcessor 'containers/cod-processor.bicep' = {
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
         serviceBusNamespaceName: serviceBusNamespaceName
-        codFilesChangedQueueName: codFilesChangedQueue
     }
 }
 

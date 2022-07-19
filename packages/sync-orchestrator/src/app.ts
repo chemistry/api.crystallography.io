@@ -24,14 +24,12 @@ export interface AppContext {
 const MESSAGES_LENGTH = 100;
 let messages: string[] = [];
 
-const scheduleCodToDiskQueue = process.env.SCHEDULE_COD_TO_DISK_QUEUE || "";
-
 const schedule = [
     {
         // every 45 min - run cod to disc sync
         cronTime: "00 45 */1 * * *",
         task: "schedule-cod-to-disk",
-        queue: scheduleCodToDiskQueue,
+        queue: "schedule-cod-to-disk",
     },
 ];
 

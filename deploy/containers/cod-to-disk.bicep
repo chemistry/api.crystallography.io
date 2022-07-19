@@ -5,7 +5,6 @@ param containerRegistry string
 param containerRegistryUsername string
 param sharedStorageName string
 param serviceBusNamespaceName string
-param codFilesChangedQueueName string
 
 @secure()
 param containerRegistryPassword string
@@ -58,10 +57,6 @@ resource codToDiskApp 'Microsoft.App/containerApps@2022-03-01' = {
                             name: 'SERVICEBUS_CONNECTION_STRING'
                             secretRef: 'sb-root-connectionstring'
                         }
-                        {
-                            name: 'QUEUE_NAME'
-                            value: codFilesChangedQueueName
-                        }
                     ]
                     volumeMounts: [
                         {
@@ -74,6 +69,24 @@ resource codToDiskApp 'Microsoft.App/containerApps@2022-03-01' = {
             scale: {
                 minReplicas: 0
                 maxReplicas: 1
+                rules: [
+                    {
+                        name: 'service-bus-scale-rule'
+                        custom: {
+                            type: 'azure-servicebus'
+                            metadata: {
+                                queueName: 'schedule-cod-to-disk'
+                                messageCount: '1'
+                            }
+                            auth: [
+                                {
+                                    secretRef: 'sb-root-connectionstring'
+                                    triggerParameter: 'connection'
+                                }
+                            ]
+                        }
+                    }
+                ]
             }
             volumes: [
                 {
