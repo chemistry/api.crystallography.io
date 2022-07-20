@@ -2,8 +2,7 @@ import * as path from "path";
 import * as fs from "fs";
 import BatchStream from "batch-stream";
 import { Readable, Transform, TransformCallback, Writable } from "stream";
-import { AppContext, QueueMessage } from "./app";
-import { messageProcessor } from "./common/azure-service-buss-subscription";
+import { AppContext, MessageInfo, messageProcessor } from "./app";
 
 export interface CodFileRecord {
     fileName: string;
@@ -40,7 +39,7 @@ const extractFileNames = new Transform({
 });
 
 let count = 0;
-const REPORT_COUNT = 1000;
+const REPORT_COUNT = 100;
 const sendInfoToConsole = () =>
     new Writable({
         objectMode: true,
@@ -111,7 +110,7 @@ let syncOngoing = false;
 
 export const getMessageProcessor = (
     context: AppContext
-): messageProcessor<QueueMessage> => {
+): messageProcessor<MessageInfo> => {
     const { logger } = context;
 
     return async ({ correlationId }: { correlationId: string }) => {

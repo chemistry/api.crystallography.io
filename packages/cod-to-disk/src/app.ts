@@ -1,12 +1,15 @@
+import { v4 as uuid } from "uuid";
+import * as cron from "node-cron";
 import { ExecOptions, ShellString } from "shelljs";
 import { Readable } from "stream";
-import { messageProcessor } from "./common/azure-service-buss-subscription";
 import { startDummyServer } from "./common/dummy-server";
 import { getMessageProcessor } from "./process";
 
-export interface QueueMessage {
+export interface MessageInfo {
     correlationId: string;
 }
+
+export type messageProcessor<T> = (message: T) => Promise<void>;
 export interface AppContext {
     logger: {
         log: (message: string) => void;
@@ -21,17 +24,22 @@ export interface AppContext {
         data: object[],
         correlationId?: string
     ) => Promise<void>;
-    subscribe: (fn: messageProcessor<QueueMessage>) => Promise<void>;
 }
 
 export const app = async (context: AppContext) => {
-    const { logger, subscribe } = context;
+    const { logger } = context;
 
     const processor = await getMessageProcessor(context);
 
-    await subscribe(processor);
+    cron.schedule("00 45 */1 * * *", async () => {
+        logger.log("Running cron job");
+        await processor({ correlationId: uuid() });
+        logger.log("Finished cron job");
+    });
 
-    logger.log(`subscribed to event buss`);
+    logger.log(`subscribed cron events`);
 
     await startDummyServer();
+
+    await processor({ correlationId: uuid() });
 };

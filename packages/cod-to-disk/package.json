@@ -29,9 +29,9 @@
         "batch-stream": "0.1.3",
         "express": "4.18.1",
         "node-cron": "3.0.1",
+        "path-parse": ">=1.0.7",
         "shelljs": "0.8.5",
-        "uuid": "8.3.2",
-        "path-parse": ">=1.0.7"
+        "uuid": "8.3.2"
     },
     "devDependencies": {
         "@types/batch-stream": "0.1.32",
@@ -39,6 +39,7 @@
         "@types/node": "18.0.3",
         "@types/node-cron": "3.0.2",
         "@types/shelljs": "0.8.11",
+        "@types/uuid": "^8.3.4",
         "path-parse": ">=1.0.7",
         "rimraf": "3.0.2",
         "typescript": "4.7.4"
