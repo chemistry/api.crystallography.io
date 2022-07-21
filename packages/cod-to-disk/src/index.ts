@@ -25,7 +25,7 @@ const getContext = async (): Promise<AppContext> => {
             return shell.exec(command);
         },
         execAsync: (command: string): Readable => {
-            return shell.exec(command, { async: true, silent: true }).stdout;
+            return shell.exec(command, { async: true }).stdout;
         },
         sendMessagesToQueue: (
             data: object[],
