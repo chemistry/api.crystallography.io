@@ -3,6 +3,7 @@ param environmentId string
 param containerImage string
 param containerRegistry string
 param containerRegistryUsername string
+param sharedStorageName string
 param serviceBusNamespaceName string
 
 @secure()
@@ -53,6 +54,12 @@ resource codProcessor 'Microsoft.App/containerApps@2022-03-01' = {
                             secretRef: 'sb-root-connectionstring'
                         }
                     ]
+                    volumeMounts: [
+                        {
+                            mountPath: '/data'
+                            volumeName: 'azure-files-volume'
+                        }
+                    ]
                 }
             ]
             scale: {
@@ -77,6 +84,13 @@ resource codProcessor 'Microsoft.App/containerApps@2022-03-01' = {
                     }
                 ]
             }
+            volumes: [
+                {
+                    name: 'azure-files-volume'
+                    storageType: 'AzureFile'
+                    storageName: sharedStorageName
+                }
+            ]
         }
     }
 }

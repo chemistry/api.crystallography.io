@@ -151,6 +151,7 @@ module codProcessor 'containers/cod-processor.bicep' = {
         containerRegistry: registry
         containerRegistryUsername: registryUsername
         containerRegistryPassword: registryPassword
+        sharedStorageName: sharedStorageName
         serviceBusNamespaceName: serviceBusNamespaceName
     }
 }
