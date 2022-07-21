@@ -19,6 +19,7 @@ var baseName = 'c14io-${environmentName}'
 var sharedStorageName = '${baseName}-share'
 var serviceBusNamespaceName = '${baseName}-service-bus'
 var fileShareName = 'data'
+var jcifStorageName = 'jcif'
 //---------------------------------------------------------------------------------//
 // Resources:
 resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
@@ -33,10 +34,12 @@ resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
     }
 }
 
-// File Shares
-resource myStorage 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' = {
-    name: '${storage.name}/default/${fileShareName}'
-    dependsOn: []
+// Blob storages
+resource jcifStorage 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-09-01' = {
+    name: '${storage.name}/default/${jcifStorageName}'
+    properties: {
+        publicAccess: 'None'
+    }
 }
 
 // Table

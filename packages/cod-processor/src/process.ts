@@ -27,6 +27,7 @@ export const getMessageProcessor = (context: AppContext): messageProcessor => {
 
         let dataToSave = jcif[dataNames[0]];
         const now = new Date();
+
         console.timeEnd("processFile");
     };
 };
