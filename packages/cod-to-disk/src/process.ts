@@ -69,6 +69,7 @@ const getSendInfoToQueue = (
                     console.log(`${count} files processed`);
                 }
                 if (messages.length > 0) {
+                    console.log(`send message - ${messages.length}`);
                     await sendMessagesToQueue(messages, correlationId);
                 }
             }

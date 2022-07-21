@@ -50,10 +50,6 @@ resource codToDiskApp 'Microsoft.App/containerApps@2022-03-01' = {
                     name: containerAppName
                     env: [
                         {
-                            name: 'DATA_PATH'
-                            value: '/data'
-                        }
-                        {
                             name: 'SERVICEBUS_CONNECTION_STRING'
                             secretRef: 'sb-root-connectionstring'
                         }
