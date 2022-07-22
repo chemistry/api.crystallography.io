@@ -54,6 +54,9 @@ resource codToDiskApp 'Microsoft.App/containerApps@2022-03-01' = {
                             secretRef: 'sb-root-connectionstring'
                         }
                     ]
+                    resources: {
+                        cpu: 1
+                    }
                     volumeMounts: [
                         {
                             mountPath: '/data'
