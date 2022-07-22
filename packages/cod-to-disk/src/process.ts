@@ -61,14 +61,16 @@ const getSendInfoToQueue = (
         write: async (chunks, _encoding, done) => {
             if (chunks && chunks.length > 0) {
                 const messages: any = [];
+
                 chunks.forEach((items: any) => {
                     messages.push(...items);
                 });
-                count += messages.length;
-                if (count % REPORT_COUNT === 0 && count > 0) {
-                    console.log(`${count} files processed`);
-                }
+
                 if (messages.length > 0) {
+                    count += messages.length;
+                    if (count % REPORT_COUNT === 0) {
+                        console.log(`${count} files processed`);
+                    }
                     console.log(`send message - ${messages.length}`);
                     await sendMessagesToQueue(messages, correlationId);
                 }
@@ -93,13 +95,14 @@ const fetchDataFromCod = ({ logger, execAsync }: AppContext): Readable => {
 const synchronizeData = (context: AppContext, correlationId: string) => {
     const { logger } = context;
 
-    return new Promise<void>((resolve) => {
+    return new Promise<void>((resolve, reject) => {
         fetchDataFromCod(context)
             .pipe(extractFileNames)
             .pipe(batch)
             .pipe(getSendInfoToQueue(context, correlationId))
             .on("error", (e) => {
                 logger.error(String(e));
+                reject();
             })
             .on("end", () => {
                 resolve();
@@ -132,9 +135,8 @@ export const getMessageProcessor = (
             syncOngoing = false;
         } catch (e) {
             logger.error(e);
-            throw e;
-        } finally {
             syncOngoing = false;
+            throw e;
         }
     };
 };
